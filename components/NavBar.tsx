@@ -18,6 +18,12 @@ export default function NavBar() {
           <span className="h-2 w-2 rounded-full bg-acid" />
           Live
         </span>
+        <Link
+          href="/lineup"
+          className="text-haze transition-colors hover:text-paper"
+        >
+          Lineup
+        </Link>
         {!loading &&
           (user ? (
             <Link
