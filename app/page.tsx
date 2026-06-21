@@ -2,6 +2,7 @@ import Grain from "@/components/Grain";
 import Marquee from "@/components/Marquee";
 import Reveal from "@/components/Reveal";
 import ProductCard from "@/components/ProductCard";
+import NavBar from "@/components/NavBar";
 import { EVENT } from "@/lib/event";
 
 const FEATURES = [
@@ -36,13 +37,7 @@ export default function HomePage() {
         className="pointer-events-none absolute right-[-20%] top-[18%] h-[36rem] w-[36rem] rounded-full bg-flame/10 blur-[140px] drift"
       />
 
-      <header className="relative z-10 mx-auto flex max-w-[1400px] items-center justify-between px-6 py-6">
-        <span className="font-display text-2xl uppercase tracking-tight">Lonjak</span>
-        <span className="hidden font-mono text-xs uppercase tracking-[0.3em] text-haze md:block">
-          Ticket Drop Engine
-        </span>
-        <span className="font-mono text-xs uppercase tracking-widest text-acid">Live</span>
-      </header>
+      <NavBar />
 
       <section className="relative z-10 mx-auto grid max-w-[1400px] grid-cols-1 gap-10 px-6 pb-16 pt-6 lg:grid-cols-[1.3fr_0.7fr] lg:items-center lg:gap-16 lg:pt-12">
         <div>

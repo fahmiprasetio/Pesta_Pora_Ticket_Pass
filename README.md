@@ -5,13 +5,13 @@ Flash sale / ticket drop untuk tiket konser dan event. Satu produk langka
 adalah **ketahanan terhadap lonjakan trafik** dan **anti-overselling**.
 
 Proyek tugas Cloud Computing. Komponen cloud ditonjolkan lewat backend Supabase
-(Postgres + RPC) dan deploy serverless di Vercel.
+(Postgres + RPC + Auth) dan deploy serverless di Vercel.
 
 ## Tech stack
 
 - Next.js 16 (App Router) + React 19 + TypeScript
 - Tailwind CSS v4
-- Supabase (Postgres + fungsi RPC `purchase_ticket`)
+- Supabase (Postgres + fungsi RPC `purchase_ticket` + Supabase Auth)
 - k6 untuk load testing (tool terpisah, bukan paket npm)
 
 ## Inti teknis: anti-overselling
@@ -28,15 +28,22 @@ RETURNING remaining_stock;
 
 Karena Postgres mengunci baris saat update, ribuan request konkuren diserialisasi
 dan stok tidak akan pernah terjual melebihi yang ada (100 tidak bisa jadi 105).
-`buyer_token` plus unique index `(product_id, buyer_token)` menjamin idempotensi:
-request yang diulang tidak menggandakan pembelian.
+`buyer_token` plus unique index `(product_id, buyer_token)` menjamin idempotensi.
+
+## Fitur
+
+- **Flash sale**: beranda, ruang tunggu virtual, checkout (simulasi bayar), hasil.
+- **Autentikasi** (Supabase Auth): daftar, masuk, keluar.
+- **Wishlist**: tersedia hanya untuk user yang sudah login, ditampilkan di halaman profil.
 
 ## Alur halaman
 
-1. **Beranda** (`/`): hero poster event, sisa stok live, countdown, tombol Beli Sekarang.
+1. **Beranda** (`/`): hero poster event, sisa stok live, countdown, tombol Beli + Wishlist.
 2. **Ruang Tunggu** (`/waiting`): virtual waiting room, posisi antrean menurun.
 3. **Checkout** (`/checkout`): ringkasan order, tombol Konfirmasi Pembayaran (Simulasi).
 4. **Hasil** (`/result`): Berhasil (order id + sisa stok) atau Sold Out.
+5. **Daftar / Masuk** (`/signup`, `/signin`): autentikasi email + password.
+6. **Profil** (`/profile`): data akun, tombol keluar, dan daftar wishlist.
 
 Pembayaran hanya disimulasikan. Tidak ada integrasi payment gateway.
 
@@ -50,10 +57,15 @@ npm install
 
 ### 2. Buat project Supabase dan jalankan SQL
 
-Di Supabase SQL Editor, jalankan berurutan:
+Di Supabase SQL Editor, jalankan berurutan (paste isi file, lalu Run):
 
-1. `supabase/migrations/0001_init.sql` (tabel + fungsi RPC + RLS)
-2. `supabase/seed.sql` (1 produk, stok 100)
+1. `supabase/migrations/0001_init.sql` (tabel products/orders + fungsi RPC + RLS)
+2. `supabase/migrations/0002_auth_wishlist.sql` (tabel profiles + wishlists + trigger profil + RLS)
+3. `supabase/seed.sql` (1 produk, stok 100)
+
+> Untuk demo lebih mulus, matikan konfirmasi email di Supabase:
+> Authentication -> Sign In / Providers -> Email -> nonaktifkan "Confirm email".
+> Dengan begitu user bisa langsung login setelah daftar.
 
 ### 3. Isi environment
 
@@ -86,7 +98,6 @@ Yang dibuktikan:
 - `tickets_confirmed` berhenti tepat di jumlah stok (100).
 - Sisa request menghasilkan `tickets_sold_out`.
 - Di Supabase, `remaining_stock` akhir = 0 dan tidak pernah minus.
-- Grafik request per detik dan response time untuk narasi measured service.
 
 Untuk reset demo: jalankan ulang `supabase/seed.sql` lalu `delete from public.orders;`.
 

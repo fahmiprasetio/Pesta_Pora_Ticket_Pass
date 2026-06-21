@@ -7,6 +7,12 @@ import {
   rememberProductId,
   resetBuyerToken,
 } from "@/lib/api";
+import {
+  addToWishlist,
+  isInWishlist,
+  removeFromWishlist,
+} from "@/lib/wishlist";
+import { useAuth } from "@/components/AuthProvider";
 import { formatRupiah } from "@/lib/format";
 import StockBadge from "@/components/StockBadge";
 import Countdown from "@/components/Countdown";
@@ -14,9 +20,12 @@ import MagneticButton from "@/components/MagneticButton";
 
 export default function ProductCard() {
   const router = useRouter();
+  const { user } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saved, setSaved] = useState(false);
+  const [wishBusy, setWishBusy] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -38,11 +47,43 @@ export default function ProductCard() {
     };
   }, []);
 
+  useEffect(() => {
+    if (user && product) {
+      isInWishlist(product.id)
+        .then(setSaved)
+        .catch(() => setSaved(false));
+    } else {
+      setSaved(false);
+    }
+  }, [user, product]);
+
   function startPurchase() {
     if (!product) return;
     resetBuyerToken();
     rememberProductId(product.id);
     router.push("/waiting");
+  }
+
+  async function toggleWishlist() {
+    if (!product) return;
+    if (!user) {
+      router.push("/signin");
+      return;
+    }
+    setWishBusy(true);
+    try {
+      if (saved) {
+        await removeFromWishlist(product.id);
+        setSaved(false);
+      } else {
+        await addToWishlist(product.id);
+        setSaved(true);
+      }
+    } catch {
+      // abaikan, biarkan state tetap
+    } finally {
+      setWishBusy(false);
+    }
   }
 
   if (loading) {
@@ -102,6 +143,26 @@ export default function ProductCard() {
       >
         {soldOut ? "Tiket Habis" : "Beli Sekarang"}
       </MagneticButton>
+
+      <button
+        type="button"
+        onClick={toggleWishlist}
+        disabled={wishBusy}
+        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-full border px-8 py-3 font-mono text-xs uppercase tracking-widest transition-colors disabled:opacity-50 ${
+          saved
+            ? "border-acid text-acid"
+            : "border-ink-line text-haze hover:border-paper hover:text-paper"
+        }`}
+      >
+        <span className={`text-base leading-none ${saved ? "text-acid" : ""}`}>
+          {saved ? "\u2665" : "\u2661"}
+        </span>
+        {user
+          ? saved
+            ? "Tersimpan di Wishlist"
+            : "Simpan ke Wishlist"
+          : "Wishlist (login dulu)"}
+      </button>
 
       <p className="mt-3 text-center font-mono text-[11px] uppercase tracking-widest text-haze">
         Anti-overselling dijamin di level database
