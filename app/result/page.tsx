@@ -1,9 +1,110 @@
-// TODO: Hasil transaksi: Berhasil / Sold out
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Grain from "@/components/Grain";
+import TicketStub from "@/components/TicketStub";
+import MagneticButton from "@/components/MagneticButton";
+import type { PurchaseResult } from "@/lib/types";
+import { EVENT } from "@/lib/event";
+import { readResult } from "@/lib/api";
+
 export default function ResultPage() {
+  const router = useRouter();
+  const [result, setResult] = useState<PurchaseResult | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    setResult(readResult());
+    setReady(true);
+  }, []);
+
+  if (!ready) {
+    return <main className="min-h-[100dvh] bg-ink" />;
+  }
+
+  const success = Boolean(result?.success) && result?.status === "confirmed";
+  const soldOut = result?.status === "sold_out";
+
   return (
-    <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Hasil Transaksi</h1>
-      <p>Berhasil / Sold out</p>
-    </div>
+    <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-clip px-6 py-16">
+      <Grain />
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute left-1/2 top-1/3 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full blur-[140px] drift ${
+          success ? "bg-acid/15" : "bg-flame/15"
+        }`}
+      />
+      <Link
+        href="/"
+        className="relative z-10 mb-10 font-display text-xl uppercase tracking-tight"
+      >
+        Lonjak
+      </Link>
+
+      <div className="relative z-10 w-full">
+        {success && result ? (
+          <div className="flex flex-col items-center">
+            <p className="font-mono text-xs uppercase tracking-[0.4em] text-acid">
+              Tiket berhasil diamankan
+            </p>
+            <h1 className="mb-8 mt-3 text-center font-display text-6xl uppercase leading-none text-acid md:text-7xl">
+              Berhasil
+            </h1>
+            <TicketStub
+              subtitle={
+                result.already_purchased
+                  ? "Tiket sudah aktif"
+                  : "E-Ticket / Festival Pass"
+              }
+              title={`${EVENT.name} ${EVENT.edition}`}
+              code={`ID ${(result.order_id ?? "").slice(0, 8).toUpperCase()}`}
+              lines={[
+                { label: "Tanggal", value: EVENT.dateLabel },
+                { label: "Lokasi", value: EVENT.venue },
+                { label: "Tier", value: EVENT.tier },
+                { label: "Sisa stok", value: String(result.remaining_stock) },
+              ]}
+            />
+            <p className="mt-6 max-w-[40ch] text-center text-sm text-haze">
+              {result.already_purchased
+                ? "Token ini sudah memegang satu tiket. Sistem menolak pembelian ganda secara otomatis."
+                : "Stok dikurangi secara atomik di database. Order id kamu unik dan tercatat permanen."}
+            </p>
+          </div>
+        ) : soldOut ? (
+          <div className="flex flex-col items-center text-center">
+            <p className="font-mono text-xs uppercase tracking-[0.4em] text-flame">
+              Kamu kalah cepat
+            </p>
+            <h1 className="mt-3 font-display text-6xl uppercase leading-none text-flame md:text-8xl">
+              Sold Out
+            </h1>
+            <p className="mt-6 max-w-[42ch] text-sm text-haze">
+              Seluruh tiket sudah habis. Walau ribuan permintaan datang
+              bersamaan, sistem tidak pernah menjual melebihi stok yang tersedia.
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center text-center">
+            <h1 className="font-display text-5xl uppercase leading-none md:text-6xl">
+              Belum ada transaksi
+            </h1>
+            <p className="mt-6 max-w-[40ch] text-sm text-haze">
+              Mulai dari beranda untuk mengikuti drop tiket.
+            </p>
+          </div>
+        )}
+
+        <div className="mt-10 flex justify-center">
+          <MagneticButton
+            onClick={() => router.push("/")}
+            className="rounded-full border border-ink-line bg-ink-soft px-8 py-4 font-display text-lg uppercase tracking-wide text-paper hover:border-acid hover:text-acid"
+          >
+            Kembali ke Beranda
+          </MagneticButton>
+        </div>
+      </div>
+    </main>
   );
 }

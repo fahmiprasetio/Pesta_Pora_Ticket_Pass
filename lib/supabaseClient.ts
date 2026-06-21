@@ -1,6 +1,21 @@
-// TODO: Supabase client browser (NEXT_PUBLIC anon key)
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-// const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-// export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Client sisi browser memakai anon key. Dibuat lazy agar import yang tidak
+// terpakai tidak menabrak proses build ketika env belum diisi.
+let cached: SupabaseClient | null = null;
+
+export function getSupabaseBrowser(): SupabaseClient {
+  if (cached) return cached;
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!url || !anonKey) {
+    throw new Error(
+      "Environment Supabase belum lengkap: butuh NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY."
+    );
+  }
+
+  cached = createClient(url, anonKey);
+  return cached;
+}
