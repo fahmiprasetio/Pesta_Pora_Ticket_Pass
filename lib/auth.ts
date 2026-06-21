@@ -11,15 +11,18 @@ export async function signUp(
   password: string,
   fullName: string
 ): Promise<{ needsConfirmation: boolean }> {
-  const supabase = getSupabaseBrowser();
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { data: { full_name: fullName } },
+  const res = await fetch("/api/auth/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password, fullName }),
   });
-  if (error) throw new Error(error.message);
-  // Jika email confirmation aktif, session belum terbentuk.
-  return { needsConfirmation: !data.session };
+  const payload = (await res.json().catch(() => ({}))) as { error?: string };
+  if (!res.ok) {
+    throw new Error(payload.error || "Gagal mendaftar.");
+  }
+  // Akun dibuat dan langsung di-confirm di server, jadi langsung buat sesi.
+  await signIn(email, password);
+  return { needsConfirmation: false };
 }
 
 export async function signIn(email: string, password: string): Promise<void> {
