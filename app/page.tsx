@@ -70,45 +70,49 @@ export default function HomePage() {
         className="pointer-events-none absolute right-[-20%] top-[18%] h-[36rem] w-[36rem] rounded-full bg-flame/10 blur-[140px] drift"
       />
 
-      <NavBar />
+      <div className="flex min-h-[100dvh] flex-col">
+        <NavBar />
 
-      <section className="relative z-10 mx-auto grid max-w-[1400px] grid-cols-1 gap-8 px-6 pb-12 pt-4 lg:grid-cols-[1.3fr_0.7fr] lg:items-center lg:gap-12 lg:pt-8">
-        <div>
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full border border-acid/40 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.3em] text-acid">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-acid opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-acid" />
-              </span>
-              Drop live
-            </span>
-            <span className="font-mono text-xs uppercase tracking-[0.4em] text-haze">
-              {EVENT.tier}
-            </span>
+        <section className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pb-10 pt-4">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-end lg:gap-12">
+            <div>
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center gap-2 rounded-full border border-acid/40 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.3em] text-acid">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-acid opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-acid" />
+                  </span>
+                  Drop live
+                </span>
+                <span className="font-mono text-xs uppercase tracking-[0.4em] text-haze">
+                  {EVENT.tier}
+                </span>
+              </div>
+              <h1 className="mt-4 font-display text-[clamp(2.25rem,6vw,5rem)] uppercase leading-[0.85]">
+                {EVENT.name}
+                <span className="block text-stroke-acid">{EVENT.edition}</span>
+              </h1>
+              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-xs uppercase tracking-widest text-haze">
+                <span>{EVENT.dateLabel}</span>
+                <span className="h-1 w-1 rounded-full bg-acid" />
+                <span>{EVENT.venue}</span>
+                <span className="h-1 w-1 rounded-full bg-acid" />
+                <span>{EVENT.gates}</span>
+              </div>
+              <p className="mt-5 max-w-[42ch] text-sm leading-relaxed text-haze">
+                A hundred tickets, one gate, thousands of buyers in the same
+                second. Built to survive the surge without ever overselling.
+              </p>
+            </div>
+
+            <div id="tiket" className="w-full scroll-mt-24 lg:max-w-md lg:justify-self-end lg:pl-4">
+              <ProductCard />
+            </div>
           </div>
-          <h1 className="mt-4 font-display text-[clamp(2.25rem,6vw,5rem)] uppercase leading-[0.85]">
-            {EVENT.name}
-            <span className="block text-stroke-acid">{EVENT.edition}</span>
-          </h1>
-          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-xs uppercase tracking-widest text-haze">
-            <span>{EVENT.dateLabel}</span>
-            <span className="h-1 w-1 rounded-full bg-acid" />
-            <span>{EVENT.venue}</span>
-            <span className="h-1 w-1 rounded-full bg-acid" />
-            <span>{EVENT.gates}</span>
-          </div>
-          <p className="mt-5 max-w-[42ch] text-sm leading-relaxed text-haze">
-            A hundred tickets, one gate, thousands of buyers in the same second.
-            Built to survive the surge without ever overselling.
-          </p>
-        </div>
+        </section>
 
-        <div id="tiket" className="w-full scroll-mt-24 lg:max-w-md lg:justify-self-end lg:pl-4">
-          <ProductCard />
-        </div>
-      </section>
-
-      <Marquee items={EVENT.lineup} />
+        <Marquee items={EVENT.lineup} />
+      </div>
 
       <section className="relative z-10 border-y border-ink-line bg-ink">
         <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-px bg-ink-line md:grid-cols-4">
