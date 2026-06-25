@@ -62,7 +62,7 @@ export default function TicketPage() {
 
   useEffect(() => {
     if (order && typeof window !== "undefined") {
-      setVerifyUrl(`${window.location.origin}/ticket/${order.id}`);
+      setVerifyUrl(`${window.location.origin}/verify/${order.id}`);
     }
   }, [order]);
 
@@ -143,9 +143,10 @@ export default function TicketPage() {
                 Scan to verify
               </p>
               <p className="mt-2 max-w-[52ch] text-sm text-haze">
-                Staff scan the QR at the gate. The QR points to a ticket
-                verification page tied to your account, and the order id is
-                permanently recorded in the database as proof of purchase.
+                Staff scan the QR at the gate. It opens a public verification
+                page that confirms the ticket is valid without exposing your
+                account details, and the order id is permanently recorded in the
+                database as proof of purchase.
               </p>
               {verifyUrl && (
                 <p className="mt-2 break-all font-mono text-[11px] text-haze">
