@@ -3,6 +3,7 @@ import type { CreatePaymentResult, Product, PurchaseResult } from "@/lib/types";
 const TOKEN_KEY = "lonjak_buyer_token";
 const RESULT_KEY = "lonjak_result";
 const PRODUCT_KEY = "lonjak_product_id";
+const ORDERS_KEY = "lonjak_orders";
 
 export function getBuyerToken(): string {
   if (typeof window === "undefined") return "";
@@ -46,6 +47,34 @@ export function readResult(): PurchaseResult | null {
     return JSON.parse(raw) as PurchaseResult;
   } catch {
     return null;
+  }
+}
+
+// Persist a confirmed order id on this device so the buyer can revisit their
+// ticket without an account. localStorage survives tab close and refresh.
+export function rememberOrderId(id: string): void {
+  if (typeof window === "undefined" || !id) return;
+  try {
+    const raw = window.localStorage.getItem(ORDERS_KEY);
+    const list: string[] = raw ? (JSON.parse(raw) as string[]) : [];
+    if (!list.includes(id)) {
+      list.unshift(id);
+      window.localStorage.setItem(ORDERS_KEY, JSON.stringify(list));
+    }
+  } catch {
+    // ignore storage errors
+  }
+}
+
+export function getRememberedOrderIds(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(ORDERS_KEY);
+    if (!raw) return [];
+    const list = JSON.parse(raw);
+    return Array.isArray(list) ? (list as string[]) : [];
+  } catch {
+    return [];
   }
 }
 

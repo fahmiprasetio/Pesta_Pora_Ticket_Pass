@@ -1,5 +1,5 @@
-import { getSupabaseBrowser } from "@/lib/supabaseClient";
 import type { Product } from "@/lib/types";
+import { getRememberedOrderIds } from "@/lib/api";
 
 export interface OrderItem {
   id: string;
@@ -26,40 +26,25 @@ function normalize(row: OrderRow): OrderItem | null {
   };
 }
 
-// Ticket history for the signed-in user (RLS limits results to their own rows).
-export async function getMyOrders(): Promise<OrderItem[]> {
-  const supabase = getSupabaseBrowser();
-  const { data: userData } = await supabase.auth.getUser();
-  const userId = userData.user?.id;
-  if (!userId) return [];
-
-  const { data, error } = await supabase
-    .from("orders")
-    .select("id, status, created_at, product:products(*)")
-    .eq("user_id", userId)
-    .eq("status", "confirmed")
-    .order("created_at", { ascending: false });
-  if (error) throw new Error(error.message);
-
-  const rows = (data ?? []) as unknown as OrderRow[];
-  return rows
-    .map(normalize)
-    .filter((item): item is OrderItem => item !== null);
+// A single ticket by order id, fetched through a service-role server route.
+// No login is required: the order id itself is the bearer reference.
+export async function getOrderById(id: string): Promise<OrderItem | null> {
+  if (!id) return null;
+  const res = await fetch(`/api/order/${id}`, { cache: "no-store" });
+  if (!res.ok) return null;
+  const json = (await res.json()) as OrderRow | { error: string };
+  if (!json || !("id" in json)) return null;
+  return normalize(json as OrderRow);
 }
 
-// A single ticket by order id. RLS ensures only the owner can read it.
-export async function getOrderById(id: string): Promise<OrderItem | null> {
-  const supabase = getSupabaseBrowser();
-  const { data: userData } = await supabase.auth.getUser();
-  if (!userData.user?.id) return null;
-
-  const { data, error } = await supabase
-    .from("orders")
-    .select("id, status, created_at, product:products(*)")
-    .eq("id", id)
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  if (!data) return null;
-
-  return normalize(data as unknown as OrderRow);
+// Tickets remembered on this device (localStorage), newest first.
+export async function getMyOrders(): Promise<OrderItem[]> {
+  const ids = getRememberedOrderIds();
+  if (ids.length === 0) return [];
+  const results = await Promise.all(
+    ids.map((id) => getOrderById(id).catch(() => null))
+  );
+  return results.filter(
+    (o): o is OrderItem => o !== null && o.status === "confirmed"
+  );
 }
