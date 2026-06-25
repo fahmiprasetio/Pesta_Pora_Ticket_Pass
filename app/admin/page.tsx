@@ -36,7 +36,7 @@ export default function AdminPage() {
       body: JSON.stringify({ token: currentToken }),
     });
     const json = await res.json();
-    if (!res.ok) throw new Error(json.error ?? "Gagal memuat statistik");
+    if (!res.ok) throw new Error(json.error ?? "Failed to load stats");
     setStats(json as Stats);
   }, []);
 
@@ -47,11 +47,11 @@ export default function AdminPage() {
       setConnected(true);
     } catch (e) {
       setConnected(false);
-      setStatsError(e instanceof Error ? e.message : "Gagal memuat statistik");
+      setStatsError(e instanceof Error ? e.message : "Failed to load stats");
     }
   }
 
-  // Polling statistik order tiap 2,5 detik.
+  // Poll order stats every 2.5 seconds.
   useEffect(() => {
     if (!connected) return;
     const id = setInterval(() => {
@@ -60,7 +60,7 @@ export default function AdminPage() {
     return () => clearInterval(id);
   }, [connected, token, loadStats]);
 
-  // Realtime: sisa stok ikut turun seketika tanpa menunggu polling.
+  // Realtime: remaining stock drops instantly without waiting for polling.
   useEffect(() => {
     if (!connected) return;
     let supabase;
@@ -109,11 +109,11 @@ export default function AdminPage() {
         body: JSON.stringify({ token }),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Gagal reset");
-      setResetMsg(json.message ?? "Stok berhasil direset.");
+      if (!res.ok) throw new Error(json.error ?? "Reset failed");
+      setResetMsg(json.message ?? "Stock has been reset.");
       await loadStats(token).catch(() => {});
     } catch (e) {
-      setResetErr(e instanceof Error ? e.message : "Gagal reset");
+      setResetErr(e instanceof Error ? e.message : "Reset failed");
     } finally {
       setBusy(false);
     }
@@ -128,39 +128,39 @@ export default function AdminPage() {
   const cards = stats
     ? [
         {
-          label: "Sisa stok",
+          label: "Stock left",
           value: String(stats.remaining_stock),
-          sub: `dari ${stats.total_stock}`,
+          sub: `of ${stats.total_stock}`,
           tone: "text-acid",
         },
         {
-          label: "Terjual",
+          label: "Sold",
           value: String(stats.sold),
-          sub: "tiket terklaim",
+          sub: "tickets claimed",
           tone: "text-flame",
         },
         {
-          label: "Order confirmed",
+          label: "Confirmed orders",
           value: String(stats.confirmed_orders),
-          sub: "order sukses",
+          sub: "successful orders",
           tone: "text-paper",
         },
         {
-          label: "Pending reservasi",
+          label: "Pending reservations",
           value: String(stats.pending_orders),
-          sub: "menunggu bayar",
+          sub: "awaiting payment",
           tone: "text-paper",
         },
         {
-          label: "Terbayar Midtrans",
+          label: "Paid via Midtrans",
           value: String(stats.paid_orders),
-          sub: "lunas (paid)",
+          sub: "paid",
           tone: "text-acid",
         },
         {
-          label: "Estimasi pendapatan",
+          label: "Estimated revenue",
           value: formatRupiah(stats.revenue),
-          sub: "dari order confirmed",
+          sub: "from confirmed orders",
           tone: "text-paper",
         },
       ]
@@ -178,11 +178,11 @@ export default function AdminPage() {
           Lonjak
         </Link>
         <p className="mt-8 font-mono text-xs uppercase tracking-[0.3em] text-flame">
-          Panel demo
+          Demo panel
         </p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
           <h1 className="font-display text-5xl uppercase leading-none md:text-6xl">
-            Dashboard Admin
+            Admin Dashboard
           </h1>
           {live && (
             <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-acid">
@@ -195,14 +195,14 @@ export default function AdminPage() {
           )}
         </div>
         <p className="mt-3 max-w-[52ch] text-sm text-haze">
-          Pantau sisa stok, order, dan pembayaran secara langsung. Sisa stok
-          diperbarui realtime, statistik order disegarkan tiap 2,5 detik.
+          Monitor remaining stock, orders, and payments live. Remaining stock
+          updates in realtime, order stats refresh every 2.5 seconds.
         </p>
 
         {!connected ? (
           <div className="mt-8 rounded-2xl border border-ink-line bg-ink-soft p-6">
             <label className="block font-mono text-[11px] uppercase tracking-widest text-haze">
-              Token admin
+              Admin token
             </label>
             <input
               type="password"
@@ -216,7 +216,7 @@ export default function AdminPage() {
               disabled={token.length === 0}
               className="mt-4 w-full rounded-full bg-acid px-8 py-4 font-display text-xl uppercase tracking-wide text-ink hover:bg-acid-deep disabled:opacity-40"
             >
-              Hubungkan dan Pantau
+              Connect and Monitor
             </MagneticButton>
             {statsError && (
               <p className="mt-4 font-mono text-xs uppercase tracking-widest text-flame">
@@ -244,7 +244,7 @@ export default function AdminPage() {
 
             <div className="mt-6 rounded-2xl border border-ink-line bg-ink-soft p-6">
               <div className="flex items-center justify-between font-mono text-xs uppercase tracking-widest text-haze">
-                <span>Progres terjual</span>
+                <span>Sold progress</span>
                 <span className="text-paper">{soldPct}%</span>
               </div>
               <div className="mt-3 h-3 w-full overflow-hidden rounded-full bg-ink-line">
@@ -260,15 +260,15 @@ export default function AdminPage() {
                 Reset demo
               </p>
               <p className="mt-2 max-w-[44ch] text-sm text-haze">
-                Kembalikan stok ke penuh dan hapus seluruh order untuk mengulang
-                drop saat merekam video.
+                Restore stock to full and delete all orders to rerun the drop
+                while recording your video.
               </p>
               <MagneticButton
                 onClick={handleReset}
                 disabled={busy}
                 className="mt-5 w-full rounded-full bg-flame px-8 py-4 font-display text-xl uppercase tracking-wide text-paper hover:opacity-90 disabled:opacity-40"
               >
-                {busy ? "Mereset..." : "Reset Stok dan Order"}
+                {busy ? "Resetting..." : "Reset Stock and Orders"}
               </MagneticButton>
               {resetMsg && (
                 <p className="mt-4 font-mono text-xs uppercase tracking-widest text-acid">

@@ -5,19 +5,19 @@ import { getSupabaseServer } from "@/lib/supabaseServer";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-// Webhook notifikasi Midtrans. Sumber kebenaran status pembayaran.
-// Verifikasi signature: sha512(order_id + status_code + gross_amount + serverKey).
+// Midtrans notification webhook. Source of truth for payment status.
+// Verify signature: sha512(order_id + status_code + gross_amount + serverKey).
 export async function POST(request: NextRequest) {
   const serverKey = process.env.MIDTRANS_SERVER_KEY;
   if (!serverKey) {
-    return NextResponse.json({ error: "Server key tidak diset." }, { status: 500 });
+    return NextResponse.json({ error: "Server key is not set." }, { status: 500 });
   }
 
   let body: Record<string, unknown> = {};
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Body tidak valid." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid body." }, { status: 400 });
   }
 
   const orderId = String(body.order_id ?? "");
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     .update(orderId + statusCode + grossAmount + serverKey)
     .digest("hex");
   if (expected !== signature) {
-    return NextResponse.json({ error: "Signature tidak valid." }, { status: 403 });
+    return NextResponse.json({ error: "Invalid signature." }, { status: 403 });
   }
 
   try {
@@ -50,11 +50,11 @@ export async function POST(request: NextRequest) {
     } else if (failed) {
       await supabase.rpc("release_order", { p_payment_ref: orderId });
     }
-    // status lain (pending) dibiarkan sebagaimana adanya.
+    // other statuses (pending) are left as-is.
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Kesalahan tak terduga";
+    const message = err instanceof Error ? err.message : "Unexpected error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -18,7 +18,7 @@ import { rememberProductId, resetBuyerToken } from "@/lib/api";
 import { formatRupiah } from "@/lib/format";
 
 function formatDate(value: string): string {
-  return new Date(value).toLocaleDateString("id-ID", {
+  return new Date(value).toLocaleDateString("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -69,7 +69,7 @@ export default function ProfilePage() {
       await removeFromWishlist(productId);
       setWishlist((prev) => prev.filter((i) => i.product.id !== productId));
     } catch {
-      // abaikan
+      // ignore
     } finally {
       setRemoving(null);
     }
@@ -94,7 +94,7 @@ export default function ProfilePage() {
     typeof user.user_metadata?.full_name === "string"
       ? user.user_metadata.full_name
       : "";
-  const displayName = profile?.full_name || metaName || "Penggemar Lonjak";
+  const displayName = profile?.full_name || metaName || "Lonjak fan";
   const memberSince = profile?.created_at ? formatDate(profile.created_at) : null;
 
   return (
@@ -109,10 +109,10 @@ export default function ProfilePage() {
 
       <section className="relative z-10 mx-auto max-w-[1100px] px-6 py-10">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-acid">
-          Akun kamu
+          Your account
         </p>
         <h1 className="mt-2 font-display text-6xl uppercase leading-none md:text-7xl">
-          Profil
+          Profile
         </h1>
 
         <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[0.8fr_1.2fr]">
@@ -137,7 +137,7 @@ export default function ProfilePage() {
                   {orders.length}
                 </p>
                 <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-haze">
-                  Tiket
+                  Tickets
                 </p>
               </div>
               <div className="rounded-xl border border-ink-line bg-ink p-4">
@@ -153,7 +153,7 @@ export default function ProfilePage() {
             {memberSince && (
               <div className="mt-6 border-t border-ink-line pt-4">
                 <p className="font-mono text-[11px] uppercase tracking-widest text-haze">
-                  Bergabung sejak
+                  Member since
                 </p>
                 <p className="mt-1 font-display text-lg uppercase">{memberSince}</p>
               </div>
@@ -163,7 +163,7 @@ export default function ProfilePage() {
               onClick={handleSignOut}
               className="mt-7 w-full rounded-full border border-flame px-8 py-3 font-mono text-xs uppercase tracking-widest text-flame transition-colors hover:bg-flame hover:text-ink"
             >
-              Keluar
+              Sign out
             </MagneticButton>
           </div>
 
@@ -171,10 +171,10 @@ export default function ProfilePage() {
             <div>
               <div className="flex items-center justify-between">
                 <h2 className="font-display text-3xl uppercase leading-none">
-                  Tiket Saya
+                  My Tickets
                 </h2>
                 <span className="font-mono text-xs uppercase tracking-widest text-haze">
-                  {orders.length} tiket
+                  {orders.length} tickets
                 </span>
               </div>
 
@@ -183,11 +183,11 @@ export default function ProfilePage() {
               ) : orders.length === 0 ? (
                 <div className="mt-6 rounded-2xl border border-dashed border-ink-line bg-ink-soft/50 p-8 text-center">
                   <p className="font-display text-xl uppercase text-haze">
-                    Belum ada tiket
+                    No tickets yet
                   </p>
                   <p className="mx-auto mt-2 max-w-[40ch] text-sm text-haze">
-                    Tiket yang berhasil kamu amankan saat drop akan muncul di
-                    sini secara otomatis.
+                    Tickets you secure during a drop will appear here
+                    automatically.
                   </p>
                 </div>
               ) : (
@@ -217,7 +217,7 @@ export default function ProfilePage() {
                           {order.id.slice(0, 8).toUpperCase()}
                         </p>
                         <span className="mt-2 inline-block rounded-full border border-acid px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-acid">
-                          Lihat tiket
+                          View ticket
                         </span>
                       </div>
                     </Link>
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                   Wishlist
                 </h2>
                 <span className="font-mono text-xs uppercase tracking-widest text-haze">
-                  {wishlist.length} item
+                  {wishlist.length} items
                 </span>
               </div>
 
@@ -241,17 +241,17 @@ export default function ProfilePage() {
               ) : wishlist.length === 0 ? (
                 <div className="mt-6 rounded-2xl border border-dashed border-ink-line bg-ink-soft/50 p-10 text-center">
                   <p className="font-display text-2xl uppercase text-haze">
-                    Wishlist masih kosong
+                    Your wishlist is empty
                   </p>
                   <p className="mx-auto mt-3 max-w-[36ch] text-sm text-haze">
-                    Simpan event favoritmu supaya gampang ditemukan saat drop
-                    berikutnya dibuka.
+                    Save your favorite events so they are easy to find when the
+                    next drop opens.
                   </p>
                   <Link
                     href="/"
                     className="mt-6 inline-block rounded-full bg-acid px-6 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-acid-deep"
                   >
-                    Jelajahi event
+                    Explore events
                   </Link>
                 </div>
               ) : (
@@ -287,7 +287,7 @@ export default function ProfilePage() {
                           onClick={() => handleBuy(item.product.id)}
                           className="rounded-full bg-acid px-5 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-acid-deep"
                         >
-                          Beli
+                          Buy
                         </button>
                         <button
                           type="button"
@@ -295,7 +295,7 @@ export default function ProfilePage() {
                           disabled={removing === item.product.id}
                           className="rounded-full border border-ink-line px-5 py-3 font-mono text-xs uppercase tracking-widest text-haze transition-colors hover:border-flame hover:text-flame disabled:opacity-50"
                         >
-                          {removing === item.product.id ? "..." : "Hapus"}
+                          {removing === item.product.id ? "..." : "Remove"}
                         </button>
                       </div>
                     </div>

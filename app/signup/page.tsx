@@ -33,14 +33,14 @@ export default function SignUpPage() {
       const { needsConfirmation } = await signUp(email, password, fullName);
       if (needsConfirmation) {
         setNotice(
-          "Akun berhasil dibuat. Cek email kamu untuk konfirmasi, lalu masuk."
+          "Account created. Check your email to confirm, then sign in."
         );
         setLoading(false);
       } else {
         router.push("/profile");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Gagal mendaftar");
+      setError(err instanceof Error ? err.message : "Failed to sign up");
       setLoading(false);
     }
   }
@@ -57,14 +57,14 @@ export default function SignUpPage() {
           Lonjak
         </Link>
         <p className="mt-8 font-mono text-xs uppercase tracking-[0.3em] text-acid">
-          Gabung sebelum drop berikutnya
+          Join before the next drop
         </p>
-        <h1 className="mt-2 font-display text-6xl uppercase leading-none">Daftar</h1>
+        <h1 className="mt-2 font-display text-6xl uppercase leading-none">Sign up</h1>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <div>
             <label className="mb-2 block font-mono text-[11px] uppercase tracking-widest text-haze">
-              Nama lengkap
+              Full name
             </label>
             <input
               type="text"
@@ -73,7 +73,7 @@ export default function SignUpPage() {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               className={inputClass}
-              placeholder="Nama kamu"
+              placeholder="Your name"
             />
           </div>
           <div>
@@ -87,12 +87,12 @@ export default function SignUpPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={inputClass}
-              placeholder="nama@email.com"
+              placeholder="name@email.com"
             />
           </div>
           <div>
             <label className="mb-2 block font-mono text-[11px] uppercase tracking-widest text-haze">
-              Kata sandi
+              Password
             </label>
             <input
               type="password"
@@ -102,7 +102,7 @@ export default function SignUpPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={inputClass}
-              placeholder="Minimal 6 karakter"
+              placeholder="At least 6 characters"
             />
           </div>
 
@@ -122,14 +122,14 @@ export default function SignUpPage() {
             disabled={loading}
             className="w-full rounded-full bg-acid px-8 py-4 font-display text-xl uppercase tracking-wide text-ink hover:bg-acid-deep"
           >
-            {loading ? "Memproses..." : "Buat Akun"}
+            {loading ? "Processing..." : "Create Account"}
           </MagneticButton>
         </form>
 
         <p className="mt-6 font-mono text-xs uppercase tracking-widest text-haze">
-          Sudah punya akun?{" "}
+          Already have an account?{" "}
           <Link href="/signin" className="text-acid hover:underline">
-            Masuk di sini
+            Sign in here
           </Link>
         </p>
       </div>

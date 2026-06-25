@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
   const serverKey = process.env.MIDTRANS_SERVER_KEY;
   if (!serverKey) {
     return NextResponse.json(
-      { error: "MIDTRANS_SERVER_KEY belum diset di environment." },
+      { error: "MIDTRANS_SERVER_KEY is not set in the environment." },
       { status: 500 }
     );
   }
@@ -68,12 +68,12 @@ export async function POST(request: NextRequest) {
     }
     if (!productId) {
       return NextResponse.json(
-        { error: "Produk tidak ditemukan." },
+        { error: "Product not found." },
         { status: 404 }
       );
     }
 
-    // 1) Kunci slot stok (atomik) -> order pending.
+    // 1) Lock the stock slot (atomic) -> pending order.
     const { data: reserve, error: reserveError } = await supabase.rpc(
       "reserve_ticket",
       {
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
         status: "sold_out",
         order_id: null,
         remaining_stock: remaining,
-        message: "Tiket habis terjual.",
+        message: "Tickets are sold out.",
       });
     }
     if (status === "confirmed") {
@@ -104,33 +104,33 @@ export async function POST(request: NextRequest) {
         order_id: orderId,
         remaining_stock: remaining,
         already_reserved: true,
-        message: "Tiket sudah dibayar sebelumnya.",
+        message: "This ticket was already paid for.",
       });
     }
     if (!orderId) {
       return NextResponse.json(
-        { error: "Gagal mengamankan slot tiket." },
+        { error: "Failed to secure the ticket slot." },
         { status: 500 }
       );
     }
 
-    // 2) Ambil harga dan nama produk untuk gross_amount.
+    // 2) Fetch product price and name for gross_amount.
     const { data: product } = await supabase
       .from("products")
       .select("name, price")
       .eq("id", productId)
       .maybeSingle();
     const amount = Math.round(Number(product?.price ?? 0));
-    const productName = (product?.name as string) ?? "Tiket Lonjak";
+    const productName = (product?.name as string) ?? "Lonjak Ticket";
 
-    // 3) order_id unik untuk Midtrans (tetap mapping ke order internal).
+    // 3) Unique order_id for Midtrans (still maps to the internal order).
     const midtransOrderId = `LONJAK-${orderId.slice(0, 8)}-${Date.now()}`;
     await supabase.rpc("set_payment_ref", {
       p_order_id: orderId,
       p_payment_ref: midtransOrderId,
     });
 
-    // 4) Buat transaksi Snap lewat REST API Midtrans.
+    // 4) Create the Snap transaction via the Midtrans REST API.
     const auth = Buffer.from(`${serverKey}:`).toString("base64");
     const snapRes = await fetch(snapBase, {
       method: "POST",
@@ -155,11 +155,11 @@ export async function POST(request: NextRequest) {
     });
     const snapJson = await snapRes.json();
     if (!snapRes.ok || !snapJson.token) {
-      // Gagal membuat transaksi: lepas slot agar stok tidak nyangkut.
+      // Transaction creation failed: release the slot so stock is not stuck.
       await supabase.rpc("release_order", { p_payment_ref: midtransOrderId });
       const detail = Array.isArray(snapJson?.error_messages)
         ? snapJson.error_messages.join(", ")
-        : "Gagal membuat transaksi Midtrans.";
+        : "Failed to create the Midtrans transaction.";
       return NextResponse.json({ error: detail }, { status: 502 });
     }
 
@@ -168,10 +168,10 @@ export async function POST(request: NextRequest) {
       order_id: orderId,
       remaining_stock: remaining,
       snap_token: snapJson.token,
-      message: "Slot diamankan, lanjutkan pembayaran.",
+      message: "Slot secured, continue to payment.",
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Kesalahan tak terduga";
+    const message = err instanceof Error ? err.message : "Unexpected error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

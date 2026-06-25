@@ -52,11 +52,11 @@ export function readResult(): PurchaseResult | null {
 export async function fetchProduct(): Promise<Product> {
   const res = await fetch("/api/product", { cache: "no-store" });
   const json = await res.json();
-  if (!res.ok) throw new Error(json.error ?? "Gagal memuat produk");
+  if (!res.ok) throw new Error(json.error ?? "Failed to load product");
   return json.product as Product;
 }
 
-// Jalur simulasi (dipakai mode simulasi dan load test): langsung confirmed.
+// Simulation path (used by simulation mode and load test): confirmed immediately.
 export async function purchaseTicket(
   productId: string,
   buyerToken: string,
@@ -73,11 +73,11 @@ export async function purchaseTicket(
     body: JSON.stringify({ productId, buyerToken }),
   });
   const json = await res.json();
-  if (!res.ok) throw new Error(json.error ?? "Gagal memproses pembelian");
+  if (!res.ok) throw new Error(json.error ?? "Failed to process purchase");
   return json as PurchaseResult;
 }
 
-// Jalur Midtrans: kunci slot stok di server lalu dapatkan Snap token.
+// Midtrans path: lock the stock slot on the server then obtain a Snap token.
 export async function createPayment(
   productId: string,
   buyerToken: string,
@@ -94,6 +94,6 @@ export async function createPayment(
     body: JSON.stringify({ productId, buyerToken }),
   });
   const json = await res.json();
-  if (!res.ok) throw new Error(json.error ?? "Gagal membuat transaksi");
+  if (!res.ok) throw new Error(json.error ?? "Failed to create transaction");
   return json as CreatePaymentResult;
 }

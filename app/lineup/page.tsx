@@ -200,7 +200,7 @@ export default function LineupPage() {
         <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-6 py-5 md:flex-row md:items-center md:justify-between">
           <span className="font-display text-xl uppercase">Lonjak</span>
           <span className="font-mono text-xs uppercase tracking-widest text-haze">
-            \u00A9 2026 Lonjak. All rights reserved.
+            © 2026 Lonjak. All rights reserved.
           </span>
         </div>
       </footer>

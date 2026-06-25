@@ -39,18 +39,18 @@ export async function getWishlist(): Promise<WishlistItem[]> {
 export async function addToWishlist(productId: string): Promise<void> {
   const supabase = getSupabaseBrowser();
   const userId = await currentUserId();
-  if (!userId) throw new Error("Harus login terlebih dahulu");
+  if (!userId) throw new Error("You must sign in first");
   const { error } = await supabase
     .from("wishlists")
     .insert({ user_id: userId, product_id: productId });
-  // 23505 = duplikat (sudah ada di wishlist), aman diabaikan.
+  // 23505 = duplicate (already in wishlist), safe to ignore.
   if (error && error.code !== "23505") throw new Error(error.message);
 }
 
 export async function removeFromWishlist(productId: string): Promise<void> {
   const supabase = getSupabaseBrowser();
   const userId = await currentUserId();
-  if (!userId) throw new Error("Harus login terlebih dahulu");
+  if (!userId) throw new Error("You must sign in first");
   const { error } = await supabase
     .from("wishlists")
     .delete()

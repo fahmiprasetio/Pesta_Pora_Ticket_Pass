@@ -30,7 +30,7 @@ export default function SignInPage() {
       await signIn(email, password);
       router.push("/profile");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Gagal masuk");
+      setError(err instanceof Error ? err.message : "Failed to sign in");
       setLoading(false);
     }
   }
@@ -47,9 +47,9 @@ export default function SignInPage() {
           Lonjak
         </Link>
         <p className="mt-8 font-mono text-xs uppercase tracking-[0.3em] text-acid">
-          Selamat datang kembali
+          Welcome back
         </p>
-        <h1 className="mt-2 font-display text-6xl uppercase leading-none">Masuk</h1>
+        <h1 className="mt-2 font-display text-6xl uppercase leading-none">Sign in</h1>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <div>
@@ -63,12 +63,12 @@ export default function SignInPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={inputClass}
-              placeholder="nama@email.com"
+              placeholder="name@email.com"
             />
           </div>
           <div>
             <label className="mb-2 block font-mono text-[11px] uppercase tracking-widest text-haze">
-              Kata sandi
+              Password
             </label>
             <input
               type="password"
@@ -77,7 +77,7 @@ export default function SignInPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={inputClass}
-              placeholder="Minimal 6 karakter"
+              placeholder="At least 6 characters"
             />
           </div>
 
@@ -92,14 +92,14 @@ export default function SignInPage() {
             disabled={loading}
             className="w-full rounded-full bg-acid px-8 py-4 font-display text-xl uppercase tracking-wide text-ink hover:bg-acid-deep"
           >
-            {loading ? "Memproses..." : "Masuk"}
+            {loading ? "Processing..." : "Sign in"}
           </MagneticButton>
         </form>
 
         <p className="mt-6 font-mono text-xs uppercase tracking-widest text-haze">
-          Belum punya akun?{" "}
+          Don&apos;t have an account yet?{" "}
           <Link href="/signup" className="text-acid hover:underline">
-            Daftar di sini
+            Sign up here
           </Link>
         </p>
       </div>

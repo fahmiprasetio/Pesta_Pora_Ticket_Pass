@@ -12,7 +12,7 @@ import { EVENT } from "@/lib/event";
 import { formatRupiah } from "@/lib/format";
 
 function formatDateTime(value: string): string {
-  return new Date(value).toLocaleString("id-ID", {
+  return new Date(value).toLocaleString("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -78,7 +78,7 @@ export default function TicketPage() {
     typeof user.user_metadata?.full_name === "string" &&
     user.user_metadata.full_name
       ? user.user_metadata.full_name
-      : (user.email ?? "Penggemar Lonjak");
+      : (user.email ?? "Lonjak fan");
 
   return (
     <main className="relative min-h-[100dvh] overflow-clip">
@@ -94,7 +94,7 @@ export default function TicketPage() {
           href="/profile"
           className="no-print font-mono text-xs uppercase tracking-[0.3em] text-haze transition-colors hover:text-acid"
         >
-          Kembali ke profil
+          Back to profile
         </Link>
 
         {loading ? (
@@ -106,7 +106,7 @@ export default function TicketPage() {
                 E-Ticket
               </p>
               <h1 className="mb-8 mt-2 font-display text-5xl uppercase leading-none md:text-6xl">
-                Tiket Kamu
+                Your Ticket
               </h1>
 
               <TicketStub
@@ -115,10 +115,10 @@ export default function TicketPage() {
                 code={`ID ${order.id.slice(0, 8).toUpperCase()}`}
                 qrValue={verifyUrl || order.id}
                 lines={[
-                  { label: "Pemegang", value: holder },
-                  { label: "Tanggal", value: EVENT.dateLabel },
-                  { label: "Lokasi", value: order.product.venue ?? EVENT.venue },
-                  { label: "Harga", value: formatRupiah(order.product.price) },
+                  { label: "Holder", value: holder },
+                  { label: "Date", value: EVENT.dateLabel },
+                  { label: "Venue", value: order.product.venue ?? EVENT.venue },
+                  { label: "Price", value: formatRupiah(order.product.price) },
                 ]}
               />
             </div>
@@ -131,7 +131,7 @@ export default function TicketPage() {
                 </p>
               </div>
               <div className="rounded-xl border border-ink-line bg-ink-soft p-4">
-                <p className="text-[10px] text-haze">Diterbitkan</p>
+                <p className="text-[10px] text-haze">Issued</p>
                 <p className="mt-1 font-display text-lg uppercase text-paper">
                   {formatDateTime(order.created_at)}
                 </p>
@@ -140,12 +140,12 @@ export default function TicketPage() {
 
             <div className="no-print mt-6 rounded-2xl border border-ink-line bg-ink-soft p-5">
               <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-acid">
-                Scan untuk verifikasi
+                Scan to verify
               </p>
               <p className="mt-2 max-w-[52ch] text-sm text-haze">
-                Petugas memindai QR di gerbang. QR mengarah ke halaman verifikasi
-                tiket yang terikat ke akunmu, dan order id tercatat permanen di
-                database sebagai bukti pembelian.
+                Staff scan the QR at the gate. The QR points to a ticket
+                verification page tied to your account, and the order id is
+                permanently recorded in the database as proof of purchase.
               </p>
               {verifyUrl && (
                 <p className="mt-2 break-all font-mono text-[11px] text-haze">
@@ -159,35 +159,35 @@ export default function TicketPage() {
                 onClick={handleDownload}
                 className="rounded-full bg-acid px-8 py-4 font-display text-xl uppercase tracking-wide text-ink hover:bg-acid-deep"
               >
-                Unduh / Cetak E-Tiket
+                Download / Print E-Ticket
               </MagneticButton>
               <Link
                 href="/profile"
                 className="inline-flex items-center rounded-full border border-ink-line px-8 py-4 font-mono text-xs uppercase tracking-widest text-haze transition-colors hover:border-acid hover:text-acid"
               >
-                Kembali ke profil
+                Back to profile
               </Link>
             </div>
             <p className="no-print mt-3 font-mono text-[11px] uppercase tracking-widest text-haze">
-              Tip: di dialog cetak pilih &quot;Simpan sebagai PDF&quot;.
+              Tip: in the print dialog choose &quot;Save as PDF&quot;.
             </p>
           </>
         ) : (
           <div className="mt-8 rounded-2xl border border-flame/40 bg-ink-soft p-8 text-center">
             <h1 className="font-display text-3xl uppercase text-flame">
-              Tiket tidak ditemukan
+              Ticket not found
             </h1>
             <p className="mx-auto mt-3 max-w-[40ch] text-sm text-haze">
               {missing
-                ? "Tiket ini tidak ada atau bukan milik akunmu."
-                : "Tiket tidak dapat dimuat saat ini."}
+                ? "This ticket does not exist or does not belong to your account."
+                : "This ticket could not be loaded right now."}
             </p>
             <div className="mt-6 flex justify-center">
               <MagneticButton
                 onClick={() => router.push("/profile")}
                 className="rounded-full border border-ink-line bg-ink px-8 py-3 font-mono text-xs uppercase tracking-widest text-paper hover:border-acid hover:text-acid"
               >
-                Ke profil
+                To profile
               </MagneticButton>
             </div>
           </div>
