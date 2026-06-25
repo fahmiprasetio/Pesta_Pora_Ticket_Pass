@@ -36,33 +36,34 @@ export default function QueueStatus() {
   const total = totalRef.current || 1;
   const current = ahead ?? total;
   const progress = Math.min(100, Math.round((1 - current / total) * 100));
+  const barStyle = { width: `${progress}%` };
 
   return (
     <div className="w-full max-w-lg">
       <div className="rounded-2xl border border-ink-line bg-ink-soft p-8 text-center">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-haze">
-          Ruang tunggu virtual
+          Virtual waiting room
         </p>
 
         {!ready ? (
           <>
             <p className="mt-6 font-mono text-xs uppercase tracking-widest text-haze">
-              Antrean di depan kamu
+              Ahead of you in line
             </p>
             <p className="font-display text-7xl leading-none text-acid tabular-nums">
-              {current.toLocaleString("id-ID")}
+              {current.toLocaleString("en-US")}
             </p>
             <p className="mt-2 text-sm text-haze">
-              Mohon tunggu, kami menahan lonjakan trafik agar server tetap stabil.
+              Please wait, we are holding back the traffic surge to keep the server stable.
             </p>
           </>
         ) : (
           <>
             <p className="mt-6 font-display text-5xl uppercase leading-none text-acid">
-              Giliran kamu
+              Your turn
             </p>
             <p className="mt-2 text-sm text-haze">
-              Slot pembelian terbuka. Lanjutkan sebelum sesi berakhir.
+              Your purchase slot is open. Continue before the session ends.
             </p>
           </>
         )}
@@ -70,11 +71,11 @@ export default function QueueStatus() {
         <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-ink">
           <div
             className="h-full rounded-full bg-acid transition-[width] duration-200 ease-out"
-            style={{ width: `${progress}%` }}
+            style={barStyle}
           />
         </div>
         <p className="mt-2 font-mono text-[11px] uppercase tracking-widest text-haze">
-          {progress}% selesai
+          {progress}% complete
         </p>
 
         <MagneticButton
@@ -82,7 +83,7 @@ export default function QueueStatus() {
           disabled={!ready}
           className="mt-7 w-full rounded-full bg-acid px-8 py-4 font-display text-xl uppercase tracking-wide text-ink hover:bg-acid-deep"
         >
-          {ready ? "Masuk Checkout" : "Menunggu..."}
+          {ready ? "Enter Checkout" : "Waiting..."}
         </MagneticButton>
       </div>
     </div>
