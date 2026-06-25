@@ -74,9 +74,9 @@ paling mudah dilakukan setelah deploy ke Vercel. Daftarkan URL
 - **Autentikasi** (Supabase Auth): daftar, masuk, keluar.
 - **Wishlist**: untuk user login, ditampilkan di profil.
 - **Riwayat tiket (Tiket Saya)**: order sukses tercatat ke akun (RLS milik sendiri).
-- **E-tiket** (`/ticket/[id]`): barcode + data pemegang + order id.
+- **E-tiket** (`/ticket/[id]`): QR verifikasi + barcode + data pemegang, bisa diunduh/cetak ke PDF.
 - **Lineup**: daftar penampil bergaya poster festival.
-- **Panel admin demo** (`/admin`): reset stok + hapus order lewat RPC `reset_demo()`.
+- **Dashboard admin** (`/admin`): statistik live (sisa stok, terjual, order, pembayaran) + reset stok lewat RPC `reset_demo()`.
 
 ## Alur halaman
 
@@ -85,10 +85,10 @@ paling mudah dilakukan setelah deploy ke Vercel. Daftarkan URL
 3. **Ruang Tunggu** (`/waiting`): virtual waiting room.
 4. **Checkout** (`/checkout`): ringkasan order, bayar (Midtrans atau simulasi).
 5. **Hasil** (`/result`): Berhasil (+ Lihat E-Tiket) atau Sold Out.
-6. **E-Tiket** (`/ticket/[id]`): tiket + barcode.
+6. **E-Tiket** (`/ticket/[id]`): tiket + QR verifikasi + barcode, tombol unduh/cetak PDF.
 7. **Daftar / Masuk** (`/signup`, `/signin`).
 8. **Profil** (`/profile`): akun, Tiket Saya, wishlist.
-9. **Admin** (`/admin`): reset stok demo (butuh token).
+9. **Admin** (`/admin`): dashboard statistik live + reset stok demo (butuh token).
 
 ## Setup lokal
 

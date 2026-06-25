@@ -1,4 +1,5 @@
 import Barcode from "@/components/Barcode";
+import QrCode from "@/components/QrCode";
 
 type Line = { label: string; value: string };
 
@@ -8,12 +9,14 @@ export default function TicketStub({
   lines,
   code,
   tone = "acid",
+  qrValue,
 }: {
   title: string;
   subtitle: string;
   lines: Line[];
   code: string;
   tone?: "acid" | "flame";
+  qrValue?: string;
 }) {
   const accent = tone === "flame" ? "text-flame" : "text-acid-deep";
   return (
@@ -38,7 +41,8 @@ export default function TicketStub({
           ))}
         </dl>
       </div>
-      <div className="relative flex w-full flex-col items-center justify-center gap-3 border-t-2 border-dashed border-ink/30 bg-paper p-6 md:w-44 md:border-l-2 md:border-t-0">
+      <div className="relative flex w-full flex-col items-center justify-center gap-3 border-t-2 border-dashed border-ink/30 bg-paper p-6 md:w-52 md:border-l-2 md:border-t-0">
+        {qrValue ? <QrCode value={qrValue} size={132} /> : null}
         <Barcode />
         <span className="font-mono text-[10px] uppercase tracking-widest text-ink/60">
           {code}

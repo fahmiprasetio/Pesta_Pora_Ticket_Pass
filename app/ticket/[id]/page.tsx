@@ -34,6 +34,7 @@ export default function TicketPage() {
   const [order, setOrder] = useState<OrderItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [missing, setMissing] = useState(false);
+  const [verifyUrl, setVerifyUrl] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) router.replace("/signin");
@@ -59,6 +60,16 @@ export default function TicketPage() {
     };
   }, [user, id]);
 
+  useEffect(() => {
+    if (order && typeof window !== "undefined") {
+      setVerifyUrl(`${window.location.origin}/ticket/${order.id}`);
+    }
+  }, [order]);
+
+  function handleDownload() {
+    if (typeof window !== "undefined") window.print();
+  }
+
   if (authLoading || !user) {
     return <main className="min-h-[100dvh] bg-ink" />;
   }
@@ -81,7 +92,7 @@ export default function TicketPage() {
       <section className="relative z-10 mx-auto max-w-2xl px-6 py-12">
         <Link
           href="/profile"
-          className="font-mono text-xs uppercase tracking-[0.3em] text-haze transition-colors hover:text-acid"
+          className="no-print font-mono text-xs uppercase tracking-[0.3em] text-haze transition-colors hover:text-acid"
         >
           Kembali ke profil
         </Link>
@@ -89,27 +100,30 @@ export default function TicketPage() {
         {loading ? (
           <div className="mt-8 h-72 w-full animate-pulse rounded-2xl border border-ink-line bg-ink-soft" />
         ) : order ? (
-          <div className="mt-8">
-            <p className="font-mono text-xs uppercase tracking-[0.4em] text-acid">
-              E-Ticket
-            </p>
-            <h1 className="mb-8 mt-2 font-display text-5xl uppercase leading-none md:text-6xl">
-              Tiket Kamu
-            </h1>
+          <>
+            <div id="ticket-print" className="mt-8">
+              <p className="font-mono text-xs uppercase tracking-[0.4em] text-acid">
+                E-Ticket
+              </p>
+              <h1 className="mb-8 mt-2 font-display text-5xl uppercase leading-none md:text-6xl">
+                Tiket Kamu
+              </h1>
 
-            <TicketStub
-              subtitle={order.product.tier ?? EVENT.tier}
-              title={order.product.name}
-              code={`ID ${order.id.slice(0, 8).toUpperCase()}`}
-              lines={[
-                { label: "Pemegang", value: holder },
-                { label: "Tanggal", value: EVENT.dateLabel },
-                { label: "Lokasi", value: order.product.venue ?? EVENT.venue },
-                { label: "Harga", value: formatRupiah(order.product.price) },
-              ]}
-            />
+              <TicketStub
+                subtitle={order.product.tier ?? EVENT.tier}
+                title={order.product.name}
+                code={`ID ${order.id.slice(0, 8).toUpperCase()}`}
+                qrValue={verifyUrl || order.id}
+                lines={[
+                  { label: "Pemegang", value: holder },
+                  { label: "Tanggal", value: EVENT.dateLabel },
+                  { label: "Lokasi", value: order.product.venue ?? EVENT.venue },
+                  { label: "Harga", value: formatRupiah(order.product.price) },
+                ]}
+              />
+            </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-3 font-mono text-xs uppercase tracking-widest text-haze">
+            <div className="no-print mt-6 grid grid-cols-2 gap-3 font-mono text-xs uppercase tracking-widest text-haze">
               <div className="rounded-xl border border-ink-line bg-ink-soft p-4">
                 <p className="text-[10px] text-haze">Status</p>
                 <p className="mt-1 font-display text-lg uppercase text-acid">
@@ -124,11 +138,40 @@ export default function TicketPage() {
               </div>
             </div>
 
-            <p className="mt-6 max-w-[46ch] text-sm text-haze">
-              Tunjukkan barcode ini di pintu masuk. Order id bersifat unik dan
-              tercatat permanen di database sebagai bukti pembelian.
+            <div className="no-print mt-6 rounded-2xl border border-ink-line bg-ink-soft p-5">
+              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-acid">
+                Scan untuk verifikasi
+              </p>
+              <p className="mt-2 max-w-[52ch] text-sm text-haze">
+                Petugas memindai QR di gerbang. QR mengarah ke halaman verifikasi
+                tiket yang terikat ke akunmu, dan order id tercatat permanen di
+                database sebagai bukti pembelian.
+              </p>
+              {verifyUrl && (
+                <p className="mt-2 break-all font-mono text-[11px] text-haze">
+                  {verifyUrl}
+                </p>
+              )}
+            </div>
+
+            <div className="no-print mt-6 flex flex-wrap gap-3">
+              <MagneticButton
+                onClick={handleDownload}
+                className="rounded-full bg-acid px-8 py-4 font-display text-xl uppercase tracking-wide text-ink hover:bg-acid-deep"
+              >
+                Unduh / Cetak E-Tiket
+              </MagneticButton>
+              <Link
+                href="/profile"
+                className="inline-flex items-center rounded-full border border-ink-line px-8 py-4 font-mono text-xs uppercase tracking-widest text-haze transition-colors hover:border-acid hover:text-acid"
+              >
+                Kembali ke profil
+              </Link>
+            </div>
+            <p className="no-print mt-3 font-mono text-[11px] uppercase tracking-widest text-haze">
+              Tip: di dialog cetak pilih &quot;Simpan sebagai PDF&quot;.
             </p>
-          </div>
+          </>
         ) : (
           <div className="mt-8 rounded-2xl border border-flame/40 bg-ink-soft p-8 text-center">
             <h1 className="font-display text-3xl uppercase text-flame">
