@@ -19,10 +19,10 @@ function diff(target: number): TimeParts {
 }
 
 const PADS: { key: keyof TimeParts; label: string }[] = [
-  { key: "days", label: "Hari" },
-  { key: "hours", label: "Jam" },
-  { key: "minutes", label: "Menit" },
-  { key: "seconds", label: "Detik" },
+  { key: "days", label: "Days" },
+  { key: "hours", label: "Hours" },
+  { key: "minutes", label: "Min" },
+  { key: "seconds", label: "Sec" },
 ];
 
 export default function Countdown({ target }: { target: string | null }) {
