@@ -16,6 +16,7 @@ export interface Order {
   id: string;
   product_id: string;
   buyer_token: string;
+  user_id: string | null;
   status: string;
   created_at: string;
 }

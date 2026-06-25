@@ -58,11 +58,18 @@ export async function fetchProduct(): Promise<Product> {
 
 export async function purchaseTicket(
   productId: string,
-  buyerToken: string
+  buyerToken: string,
+  accessToken?: string
 ): Promise<PurchaseResult> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  // Sertakan token sesi bila user login, supaya order tercatat ke akunnya.
+  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+
   const res = await fetch("/api/purchase", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify({ productId, buyerToken }),
   });
   const json = await res.json();

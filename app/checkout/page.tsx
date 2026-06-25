@@ -15,6 +15,7 @@ import {
   rememberProductId,
   storeResult,
 } from "@/lib/api";
+import { getSupabaseBrowser } from "@/lib/supabaseClient";
 import { formatRupiah } from "@/lib/format";
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -60,7 +61,15 @@ export default function CheckoutPage() {
     try {
       const productId = getRememberedProductId() ?? product.id;
       const token = getBuyerToken();
-      const result = await purchaseTicket(productId, token);
+      // Ambil token sesi bila user login agar order tercatat ke akunnya.
+      let accessToken: string | undefined;
+      try {
+        const { data } = await getSupabaseBrowser().auth.getSession();
+        accessToken = data.session?.access_token ?? undefined;
+      } catch {
+        accessToken = undefined;
+      }
+      const result = await purchaseTicket(productId, token, accessToken);
       storeResult(result);
       router.push("/result");
     } catch (e) {

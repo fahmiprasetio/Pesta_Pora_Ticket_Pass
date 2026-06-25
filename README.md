@@ -17,7 +17,7 @@ Proyek tugas Cloud Computing. Komponen cloud ditonjolkan lewat backend Supabase
 ## Inti teknis: anti-overselling
 
 Pengurangan stok dilakukan lewat satu pernyataan atomik ber-row-lock di Postgres,
-dibungkus dalam fungsi RPC `purchase_ticket(p_product_id, p_buyer_token)`:
+dibungkus dalam fungsi RPC `purchase_ticket(p_product_id, p_buyer_token, p_user_id)`:
 
 ```sql
 UPDATE products
@@ -29,21 +29,28 @@ RETURNING remaining_stock;
 Karena Postgres mengunci baris saat update, ribuan request konkuren diserialisasi
 dan stok tidak akan pernah terjual melebihi yang ada (100 tidak bisa jadi 105).
 `buyer_token` plus unique index `(product_id, buyer_token)` menjamin idempotensi.
+`p_user_id` bersifat opsional: diisi otomatis (dari token sesi yang diverifikasi
+server) saat pembeli login, dan `null` untuk pembelian anonim atau load test.
 
 ## Fitur
 
 - **Flash sale**: beranda, ruang tunggu virtual, checkout (simulasi bayar), hasil.
 - **Autentikasi** (Supabase Auth): daftar, masuk, keluar.
 - **Wishlist**: tersedia hanya untuk user yang sudah login, ditampilkan di halaman profil.
+- **Riwayat tiket (Tiket Saya)**: order yang sukses tercatat ke akun lewat `user_id`
+  terverifikasi, lalu ditampilkan di profil. Dilindungi RLS (user hanya bisa
+  melihat order miliknya sendiri).
+- **Lineup**: halaman daftar penampil bergaya poster festival.
 
 ## Alur halaman
 
 1. **Beranda** (`/`): hero poster event, sisa stok live, countdown, tombol Beli + Wishlist.
-2. **Ruang Tunggu** (`/waiting`): virtual waiting room, posisi antrean menurun.
-3. **Checkout** (`/checkout`): ringkasan order, tombol Konfirmasi Pembayaran (Simulasi).
-4. **Hasil** (`/result`): Berhasil (order id + sisa stok) atau Sold Out.
-5. **Daftar / Masuk** (`/signup`, `/signin`): autentikasi email + password.
-6. **Profil** (`/profile`): data akun, tombol keluar, dan daftar wishlist.
+2. **Lineup** (`/lineup`): daftar penampil, jadwal panggung.
+3. **Ruang Tunggu** (`/waiting`): virtual waiting room, posisi antrean menurun.
+4. **Checkout** (`/checkout`): ringkasan order, tombol Konfirmasi Pembayaran (Simulasi).
+5. **Hasil** (`/result`): Berhasil (order id + sisa stok) atau Sold Out.
+6. **Daftar / Masuk** (`/signup`, `/signin`): autentikasi email + password.
+7. **Profil** (`/profile`): data akun, tombol keluar, riwayat Tiket Saya, dan wishlist.
 
 Pembayaran hanya disimulasikan. Tidak ada integrasi payment gateway.
 
@@ -61,7 +68,8 @@ Di Supabase SQL Editor, jalankan berurutan (paste isi file, lalu Run):
 
 1. `supabase/migrations/0001_init.sql` (tabel products/orders + fungsi RPC + RLS)
 2. `supabase/migrations/0002_auth_wishlist.sql` (tabel profiles + wishlists + trigger profil + RLS)
-3. `supabase/seed.sql` (1 produk, stok 100)
+3. `supabase/migrations/0003_orders_user.sql` (kolom user_id pada orders + RPC ber-user_id + RLS riwayat tiket)
+4. `supabase/seed.sql` (1 produk, stok 100)
 
 > Untuk demo lebih mulus, matikan konfirmasi email di Supabase:
 > Authentication -> Sign In / Providers -> Email -> nonaktifkan "Confirm email".
