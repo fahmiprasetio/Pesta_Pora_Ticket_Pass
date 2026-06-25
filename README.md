@@ -5,13 +5,13 @@ Flash sale / ticket drop untuk tiket konser dan event. Satu produk langka
 adalah **ketahanan terhadap lonjakan trafik** dan **anti-overselling**.
 
 Proyek tugas Cloud Computing. Komponen cloud ditonjolkan lewat backend Supabase
-(Postgres + RPC + Auth) dan deploy serverless di Vercel.
+(Postgres + RPC + Auth + Realtime) dan deploy serverless di Vercel.
 
 ## Tech stack
 
 - Next.js 16 (App Router) + React 19 + TypeScript
 - Tailwind CSS v4
-- Supabase (Postgres + fungsi RPC + Supabase Auth)
+- Supabase (Postgres + fungsi RPC + Supabase Auth + Realtime)
 - Midtrans Snap (pembayaran, mode sandbox) lewat REST API
 - k6 untuk load testing (tool terpisah, bukan paket npm)
 
@@ -38,6 +38,13 @@ Ada dua jalur transaksi yang memakai logika atomik yang sama:
   lalu webhook men-`confirmed` (atau `release_order` mengembalikan stok bila
   gagal/expire).
 
+## Stok realtime
+
+Beranda berlangganan perubahan baris `products` lewat Supabase Realtime, jadi
+sisa stok turun otomatis tanpa refresh saat drop atau load test berjalan
+(indikator "Stok live" muncul saat langganan aktif). Diaktifkan lewat migrasi
+`0006_realtime_products.sql` yang mendaftarkan tabel ke publication realtime.
+
 ## Pembayaran (Midtrans Snap)
 
 Pola yang dipakai aman untuk flash sale:
@@ -62,6 +69,7 @@ paling mudah dilakukan setelah deploy ke Vercel. Daftarkan URL
 ## Fitur
 
 - **Flash sale**: beranda, ruang tunggu virtual, checkout, hasil.
+- **Stok realtime**: sisa stok di beranda turun otomatis lewat Supabase Realtime.
 - **Pembayaran Midtrans Snap** (sandbox) dengan reserve-pay-confirm + webhook.
 - **Autentikasi** (Supabase Auth): daftar, masuk, keluar.
 - **Wishlist**: untuk user login, ditampilkan di profil.
@@ -99,7 +107,8 @@ Di Supabase SQL Editor, jalankan berurutan:
 3. `supabase/migrations/0003_orders_user.sql`
 4. `supabase/migrations/0004_reset_demo.sql`
 5. `supabase/migrations/0005_payment_midtrans.sql`
-6. `supabase/seed.sql`
+6. `supabase/migrations/0006_realtime_products.sql`
+7. `supabase/seed.sql`
 
 > Untuk demo lebih mulus, matikan konfirmasi email di Supabase:
 > Authentication -> Sign In / Providers -> Email -> nonaktifkan "Confirm email".
@@ -130,6 +139,7 @@ Yang dibuktikan:
 - `tickets_confirmed` berhenti tepat di jumlah stok (100).
 - Sisa request menghasilkan `tickets_sold_out`.
 - Di Supabase, `remaining_stock` akhir = 0 dan tidak pernah minus.
+- Buka beranda di tab lain: sisa stok turun live tanpa refresh saat test jalan.
 
 Reset demo: buka `/admin`, masukkan `ADMIN_RESET_TOKEN`, klik reset.
 

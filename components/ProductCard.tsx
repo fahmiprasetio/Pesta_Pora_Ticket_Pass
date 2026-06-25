@@ -12,6 +12,7 @@ import {
   isInWishlist,
   removeFromWishlist,
 } from "@/lib/wishlist";
+import { getSupabaseBrowser } from "@/lib/supabaseClient";
 import { useAuth } from "@/components/AuthProvider";
 import { formatRupiah } from "@/lib/format";
 import StockBadge from "@/components/StockBadge";
@@ -26,6 +27,7 @@ export default function ProductCard() {
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [wishBusy, setWishBusy] = useState(false);
+  const [live, setLive] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -46,6 +48,44 @@ export default function ProductCard() {
       active = false;
     };
   }, []);
+
+  // Langganan realtime: sisa stok turun otomatis tanpa refresh.
+  const productId = product?.id;
+  useEffect(() => {
+    if (!productId) return;
+    let supabase;
+    try {
+      supabase = getSupabaseBrowser();
+    } catch {
+      return;
+    }
+    const channel = supabase.channel(`stock-${productId}`);
+    channel.on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "products",
+        filter: `id=eq.${productId}`,
+      },
+      (payload) => {
+        const next = payload.new as { remaining_stock?: number };
+        if (typeof next.remaining_stock === "number") {
+          const value = next.remaining_stock;
+          setProduct((prev) =>
+            prev ? { ...prev, remaining_stock: value } : prev
+          );
+        }
+      }
+    );
+    channel.subscribe((status) => {
+      if (status === "SUBSCRIBED") setLive(true);
+    });
+    return () => {
+      setLive(false);
+      supabase.removeChannel(channel);
+    };
+  }, [productId]);
 
   useEffect(() => {
     if (user && product) {
@@ -121,6 +161,18 @@ export default function ProductCard() {
         </span>
         <StockBadge remaining={product.remaining_stock} total={product.total_stock} />
       </div>
+
+      {live && (
+        <div className="mt-3 flex items-center justify-end gap-2">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-acid opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-acid" />
+          </span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-acid">
+            Stok live
+          </span>
+        </div>
+      )}
 
       <p className="mt-5 font-mono text-xs uppercase tracking-widest text-haze">
         Harga per tiket
