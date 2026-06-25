@@ -4,16 +4,16 @@ import { getSupabaseServer } from "@/lib/supabaseServer";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-// Statistik demo untuk dashboard admin.
-// Dilindungi ADMIN_RESET_TOKEN dan dieksekusi pakai service role (bypass RLS)
-// supaya bisa menghitung seluruh order, bukan hanya milik user.
+// Demo stats for the admin dashboard.
+// Protected by ADMIN_RESET_TOKEN and executed with the service role (bypass RLS)
+// so it can count all orders, not just the current user's.
 export async function POST(request: NextRequest) {
   const expected = process.env.ADMIN_RESET_TOKEN;
   if (!expected) {
     return NextResponse.json(
       {
         error:
-          "ADMIN_RESET_TOKEN belum diset di environment. Tambahkan dulu untuk membuka dashboard.",
+          "ADMIN_RESET_TOKEN is not set in the environment. Add it first to open the dashboard.",
       },
       { status: 403 }
     );
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
   if (token !== expected) {
     return NextResponse.json(
-      { error: "Token admin tidak valid." },
+      { error: "Invalid admin token." },
       { status: 401 }
     );
   }
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       revenue: confirmedOrders * price,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Kesalahan tak terduga";
+    const message = err instanceof Error ? err.message : "Unexpected error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

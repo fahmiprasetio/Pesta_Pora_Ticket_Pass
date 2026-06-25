@@ -50,37 +50,37 @@ export default function ResultPage() {
         {success && result ? (
           <div className="flex flex-col items-center">
             <p className="font-mono text-xs uppercase tracking-[0.4em] text-acid">
-              Tiket berhasil diamankan
+              Ticket secured
             </p>
             <h1 className="mb-8 mt-3 text-center font-display text-6xl uppercase leading-none text-acid md:text-7xl">
-              Berhasil
+              Success
             </h1>
             <TicketStub
               subtitle={
                 result.already_purchased
-                  ? "Tiket sudah aktif"
+                  ? "Ticket already active"
                   : "E-Ticket / Festival Pass"
               }
               title={`${EVENT.name} ${EVENT.edition}`}
               code={`ID ${orderId.slice(0, 8).toUpperCase()}`}
               lines={[
-                { label: "Tanggal", value: EVENT.dateLabel },
-                { label: "Lokasi", value: EVENT.venue },
+                { label: "Date", value: EVENT.dateLabel },
+                { label: "Venue", value: EVENT.venue },
                 { label: "Tier", value: EVENT.tier },
-                { label: "Sisa stok", value: String(result.remaining_stock) },
+                { label: "Stock left", value: String(result.remaining_stock) },
               ]}
             />
             <p className="mt-6 max-w-[40ch] text-center text-sm text-haze">
               {result.already_purchased
-                ? "Token ini sudah memegang satu tiket. Sistem menolak pembelian ganda secara otomatis."
-                : "Stok dikurangi secara atomik di database. Order id kamu unik dan tercatat permanen."}
+                ? "This token already holds a ticket. The system automatically rejects duplicate purchases."
+                : "Stock was decremented atomically in the database. Your order id is unique and permanently recorded."}
             </p>
             {canViewTicket ? (
               <Link
                 href={`/ticket/${orderId}`}
                 className="mt-6 inline-block rounded-full bg-acid px-7 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-acid-deep"
               >
-                Lihat E-Tiket
+                View E-Ticket
               </Link>
             ) : (
               success && (
@@ -88,7 +88,7 @@ export default function ResultPage() {
                   href="/signin"
                   className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-haze underline transition-colors hover:text-acid"
                 >
-                  Masuk untuk menyimpan tiket ke akun
+                  Sign in to save this ticket to your account
                 </Link>
               )
             )}
@@ -96,23 +96,23 @@ export default function ResultPage() {
         ) : soldOut ? (
           <div className="flex flex-col items-center text-center">
             <p className="font-mono text-xs uppercase tracking-[0.4em] text-flame">
-              Kamu kalah cepat
+              You were a step too slow
             </p>
             <h1 className="mt-3 font-display text-6xl uppercase leading-none text-flame md:text-8xl">
               Sold Out
             </h1>
             <p className="mt-6 max-w-[42ch] text-sm text-haze">
-              Seluruh tiket sudah habis. Walau ribuan permintaan datang
-              bersamaan, sistem tidak pernah menjual melebihi stok yang tersedia.
+              All tickets are gone. Even with thousands of requests arriving at
+              once, the system never sells beyond available stock.
             </p>
           </div>
         ) : (
           <div className="flex flex-col items-center text-center">
             <h1 className="font-display text-5xl uppercase leading-none md:text-6xl">
-              Belum ada transaksi
+              No transaction yet
             </h1>
             <p className="mt-6 max-w-[40ch] text-sm text-haze">
-              Mulai dari beranda untuk mengikuti drop tiket.
+              Start from the home page to join the ticket drop.
             </p>
           </div>
         )}
@@ -122,7 +122,7 @@ export default function ResultPage() {
             onClick={() => router.push("/")}
             className="rounded-full border border-ink-line bg-ink-soft px-8 py-4 font-display text-lg uppercase tracking-wide text-paper hover:border-acid hover:text-acid"
           >
-            Kembali ke Beranda
+            Back to Home
           </MagneticButton>
         </div>
       </div>

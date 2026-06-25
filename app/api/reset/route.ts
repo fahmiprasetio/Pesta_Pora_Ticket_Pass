@@ -4,16 +4,16 @@ import { getSupabaseServer } from "@/lib/supabaseServer";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-// Reset demo: kembalikan stok ke penuh dan hapus order.
-// Dilindungi token admin (ADMIN_RESET_TOKEN) supaya tidak bisa dipicu sembarang
-// orang. Eksekusi pakai service role lewat RPC reset_demo().
+// Demo reset: restore stock to full and delete orders.
+// Protected by an admin token (ADMIN_RESET_TOKEN) so it cannot be triggered by
+// just anyone. Executed with the service role via the reset_demo() RPC.
 export async function POST(request: NextRequest) {
   const expected = process.env.ADMIN_RESET_TOKEN;
   if (!expected) {
     return NextResponse.json(
       {
         error:
-          "ADMIN_RESET_TOKEN belum diset di environment. Tambahkan dulu untuk mengaktifkan reset.",
+          "ADMIN_RESET_TOKEN is not set in the environment. Add it first to enable reset.",
       },
       { status: 403 }
     );
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
   if (token !== expected) {
     return NextResponse.json(
-      { error: "Token admin tidak valid." },
+      { error: "Invalid admin token." },
       { status: 401 }
     );
   }
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     }
     return NextResponse.json(data);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Kesalahan tak terduga";
+    const message = err instanceof Error ? err.message : "Unexpected error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

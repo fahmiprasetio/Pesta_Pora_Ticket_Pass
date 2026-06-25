@@ -49,7 +49,7 @@ export default function ProductCard() {
     };
   }, []);
 
-  // Langganan realtime: sisa stok turun otomatis tanpa refresh.
+  // Realtime subscription: remaining stock drops automatically without refresh.
   const productId = product?.id;
   useEffect(() => {
     if (!productId) return;
@@ -120,7 +120,7 @@ export default function ProductCard() {
         setSaved(true);
       }
     } catch {
-      // abaikan, biarkan state tetap
+      // ignore, keep current state
     } finally {
       setWishBusy(false);
     }
@@ -141,11 +141,11 @@ export default function ProductCard() {
     return (
       <div className="w-full rounded-2xl border border-flame/50 bg-ink-soft p-6">
         <p className="font-mono text-xs uppercase tracking-widest text-flame">
-          Koneksi backend gagal
+          Backend connection failed
         </p>
         <p className="mt-2 text-sm text-haze">
-          {error ?? "Produk belum tersedia."} Pastikan environment Supabase
-          sudah diisi dan seed.sql sudah dijalankan.
+          {error ?? "Product not available yet."} Make sure your Supabase
+          environment variables are set and seed.sql has been run.
         </p>
       </div>
     );
@@ -169,13 +169,13 @@ export default function ProductCard() {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-acid" />
           </span>
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-acid">
-            Stok live
+            Live stock
           </span>
         </div>
       )}
 
       <p className="mt-5 font-mono text-xs uppercase tracking-widest text-haze">
-        Harga per tiket
+        Price per ticket
       </p>
       <p className="font-display text-5xl leading-none text-paper">
         {formatRupiah(product.price)}
@@ -183,7 +183,7 @@ export default function ProductCard() {
 
       <div className="mt-6">
         <p className="mb-2 font-mono text-xs uppercase tracking-widest text-haze">
-          Menuju hari-H
+          Time until showtime
         </p>
         <Countdown target={product.event_date} />
       </div>
@@ -193,7 +193,7 @@ export default function ProductCard() {
         disabled={soldOut}
         className="mt-7 w-full rounded-full bg-acid px-8 py-4 font-display text-xl uppercase tracking-wide text-ink hover:bg-acid-deep"
       >
-        {soldOut ? "Tiket Habis" : "Beli Sekarang"}
+        {soldOut ? "Sold Out" : "Buy Now"}
       </MagneticButton>
 
       <button
@@ -211,13 +211,13 @@ export default function ProductCard() {
         </span>
         {user
           ? saved
-            ? "Tersimpan di Wishlist"
-            : "Simpan ke Wishlist"
-          : "Wishlist (login dulu)"}
+            ? "Saved to Wishlist"
+            : "Save to Wishlist"
+          : "Wishlist (sign in first)"}
       </button>
 
       <p className="mt-3 text-center font-mono text-[11px] uppercase tracking-widest text-haze">
-        Anti-overselling dijamin di level database
+        Anti-overselling guaranteed at the database level
       </p>
     </div>
   );

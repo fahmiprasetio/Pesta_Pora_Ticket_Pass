@@ -19,13 +19,13 @@ export async function GET() {
     }
     if (!data) {
       return NextResponse.json(
-        { error: "Produk belum tersedia. Jalankan seed.sql terlebih dahulu." },
+        { error: "Product not available yet. Run seed.sql first." },
         { status: 404 }
       );
     }
     return NextResponse.json({ product: data });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Kesalahan tak terduga";
+    const message = err instanceof Error ? err.message : "Unexpected error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

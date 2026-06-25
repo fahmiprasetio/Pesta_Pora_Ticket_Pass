@@ -5,8 +5,8 @@ import { getSupabaseServer } from "@/lib/supabaseServer";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-// Verifikasi token akses (bila ada) lalu kembalikan id user yang sah.
-// Tidak pernah mempercayai id mentah dari client: id diambil dari token.
+// Verify the access token (if present) and return the authenticated user id.
+// Never trust a raw id from the client: the id is derived from the token.
 async function resolveUserId(request: NextRequest): Promise<string | null> {
   const authHeader = request.headers.get("authorization") ?? "";
   const token = authHeader.toLowerCase().startsWith("bearer ")
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     const buyerToken = body.buyerToken ?? globalThis.crypto.randomUUID();
     const userId = await resolveUserId(request);
 
-    // Jika productId tidak dikirim (mis. dari load test), ambil produk pertama.
+    // If productId is not sent (e.g. from a load test), grab the first product.
     if (!productId) {
       const { data: product } = await supabase
         .from("products")
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     if (!productId) {
       return NextResponse.json(
-        { error: "Produk tidak ditemukan." },
+        { error: "Product not found." },
         { status: 404 }
       );
     }
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ...data, buyer_token: buyerToken });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Kesalahan tak terduga";
+    const message = err instanceof Error ? err.message : "Unexpected error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

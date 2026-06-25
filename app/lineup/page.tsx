@@ -11,7 +11,7 @@ type Act = {
 };
 
 const HEADLINERS: Act[] = [
-  { name: "SENJA KOLEKTIF", genre: "Indie Orkestra", origin: "Bandung" },
+  { name: "SENJA KOLEKTIF", genre: "Indie Orchestra", origin: "Bandung" },
   { name: "RERUNTUH", genre: "Post Rock", origin: "Yogyakarta" },
   { name: "PARADE HUJAN", genre: "Dream Pop", origin: "Jakarta" },
 ];
@@ -31,7 +31,7 @@ const SUPPORT: Act[] = [
 
 const SCHEDULE = [
   {
-    stage: "Panggung Gelora",
+    stage: "Gelora Stage",
     slots: [
       { time: "17:30", act: "FANA" },
       { time: "18:20", act: "KMRN" },
@@ -41,7 +41,7 @@ const SCHEDULE = [
     ],
   },
   {
-    stage: "Panggung Nusantara",
+    stage: "Nusantara Stage",
     slots: [
       { time: "17:45", act: "DERAI" },
       { time: "18:35", act: "ARUS BALIK" },
@@ -70,7 +70,7 @@ export default function LineupPage() {
 
       <section className="relative z-10 mx-auto max-w-[1400px] px-6 pb-10 pt-6 lg:pt-12">
         <p className="font-mono text-xs uppercase tracking-[0.4em] text-acid">
-          Daftar Penampil
+          The acts
         </p>
         <h1 className="mt-4 font-display text-[clamp(3.5rem,13vw,12rem)] uppercase leading-[0.8]">
           Line Up
@@ -115,7 +115,7 @@ export default function LineupPage() {
       <section className="relative z-10 mx-auto max-w-[1400px] px-6 py-16">
         <div className="mb-6 flex items-center gap-4">
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-acid">
-            Penampil Utama
+            Main acts
           </span>
           <span className="h-px flex-1 bg-ink-line" />
         </div>
@@ -137,7 +137,7 @@ export default function LineupPage() {
 
         <div className="mb-6 mt-14 flex items-center gap-4">
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-haze">
-            Pendukung
+            Support
           </span>
           <span className="h-px flex-1 bg-ink-line" />
         </div>
@@ -161,7 +161,7 @@ export default function LineupPage() {
       <section className="relative z-10 mx-auto max-w-[1400px] px-6 pb-24">
         <Reveal>
           <h2 className="max-w-[18ch] font-display text-4xl uppercase leading-none md:text-6xl">
-            Jadwal <span className="text-acid">Panggung</span>
+            Stage <span className="text-acid">Schedule</span>
           </h2>
         </Reveal>
         <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -192,15 +192,15 @@ export default function LineupPage() {
           ))}
         </div>
         <p className="mt-8 max-w-[60ch] font-mono text-xs uppercase leading-relaxed tracking-widest text-haze">
-          Jadwal dapat berubah sewaktu waktu. Susunan penampil bersifat ilustrasi untuk demo.
+          Schedule subject to change. The lineup is illustrative for this demo.
         </p>
       </section>
 
       <footer className="relative z-10 border-t border-ink-line">
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-6 py-10 md:flex-row md:items-center md:justify-between">
+        <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-6 py-5 md:flex-row md:items-center md:justify-between">
           <span className="font-display text-xl uppercase">Lonjak</span>
           <span className="font-mono text-xs uppercase tracking-widest text-haze">
-            Next.js + Supabase / Demo Cloud Computing
+            \u00A9 2026 Lonjak. All rights reserved.
           </span>
         </div>
       </footer>
