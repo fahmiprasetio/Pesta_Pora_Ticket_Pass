@@ -9,7 +9,9 @@ export default function QrCode({
   value: string;
   size?: number;
 }) {
-  const src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&margin=0&qzone=1&data=${encodeURIComponent(
+  const endpoint = "https://api.qrserver.com/v1/create-qr-code/";
+  const dimension = `${size}x${size}`;
+  const src = `${endpoint}?size=${dimension}&margin=0&qzone=1&data=${encodeURIComponent(
     value
   )}`;
   return (
