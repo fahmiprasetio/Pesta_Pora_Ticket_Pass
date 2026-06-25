@@ -30,7 +30,7 @@ export default function NavBar() {
               href="/profile"
               className="text-haze transition-colors hover:text-paper"
             >
-              Profil
+              Profile
             </Link>
           ) : (
             <>
@@ -38,13 +38,13 @@ export default function NavBar() {
                 href="/signin"
                 className="text-haze transition-colors hover:text-paper"
               >
-                Masuk
+                Sign in
               </Link>
               <Link
                 href="/signup"
                 className="rounded-full bg-acid px-4 py-2 text-ink transition-colors hover:bg-acid-deep"
               >
-                Daftar
+                Sign up
               </Link>
             </>
           ))}
