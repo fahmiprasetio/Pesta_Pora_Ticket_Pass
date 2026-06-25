@@ -6,29 +6,29 @@ import NavBar from "@/components/NavBar";
 import { EVENT } from "@/lib/event";
 
 const STATS = [
-  { value: "100", label: "Tiket", note: "Stok tetap. Tidak pernah bertambah diam-diam." },
-  { value: "1", label: "Drop", note: "Satu gerbang, satu waktu, untuk semua." },
-  { value: "0", label: "Oversold", note: "Dijamin di level baris database." },
-  { value: "100%", label: "Konsisten", note: "Tiket ke-101 tidak pernah ada." },
+  { value: "100", label: "Tickets", note: "Fixed stock. Never quietly topped up." },
+  { value: "1", label: "Drop", note: "One gate, one moment, for everyone." },
+  { value: "0", label: "Oversold", note: "Guaranteed at the database row level." },
+  { value: "100%", label: "Consistent", note: "There is no ticket number 101." },
 ];
 
 const FEATURES = [
   {
     num: "01",
     title: "Anti Overselling",
-    body: "Stok dikurangi lewat satu UPDATE ber-row-lock di Postgres. Ribuan request konkuren diserialisasi, jadi stok tidak bisa tembus nol.",
+    body: "Stock is decremented in a single row-locked UPDATE in Postgres. Thousands of concurrent requests are serialized, so stock can never drop below zero.",
     spec: "Postgres row lock + unique index",
   },
   {
     num: "02",
     title: "Rapid Elasticity",
-    body: "Berjalan di atas fungsi serverless yang membesar otomatis saat trafik meledak, lalu mengecil lagi saat sepi. Tanpa server nganggur.",
+    body: "Runs on serverless functions that scale up automatically when traffic spikes, then shrink back when it is quiet. No idle servers.",
     spec: "Vercel serverless + Supabase",
   },
   {
     num: "03",
     title: "Measured Service",
-    body: "Tiap drop terukur. Request per detik, latensi p95, dan rasio sukses dipantau langsung lewat skenario load test k6.",
+    body: "Every drop is measured. Requests per second, p95 latency, and success rate are tracked live through k6 load test scenarios.",
     spec: "k6 load test",
   },
 ];
@@ -36,23 +36,23 @@ const FEATURES = [
 const STEPS = [
   {
     num: "01",
-    title: "Antre",
-    body: "Masuk ruang tunggu virtual. Tiap pembeli memegang token unik, tanpa wajib daftar akun.",
+    title: "Queue",
+    body: "Enter the virtual waiting room. Every buyer holds a unique token, with no account required.",
   },
   {
     num: "02",
-    title: "Gerbang dibuka",
-    body: "Begitu drop mulai, ribuan permintaan menghantam endpoint yang sama di detik yang sama.",
+    title: "Gates open",
+    body: "The moment the drop starts, thousands of requests hit the same endpoint in the same second.",
   },
   {
     num: "03",
-    title: "Kunci atomik",
-    body: "Postgres mengunci baris stok dan menguranginya satu per satu. Seratus tetap seratus.",
+    title: "Atomic lock",
+    body: "Postgres locks the stock row and decrements it one by one. A hundred stays a hundred.",
   },
   {
     num: "04",
-    title: "Tiket terbit",
-    body: "Slot yang berhasil langsung dikonfirmasi. E-tiket ber-QR siap dipindai dan diunduh.",
+    title: "Ticket issued",
+    body: "Successful slots are confirmed instantly. A QR e-ticket is ready to scan and download.",
   },
 ];
 
@@ -98,13 +98,13 @@ export default function HomePage() {
             <span>{EVENT.gates}</span>
           </div>
           <p className="mt-6 max-w-[46ch] text-base leading-relaxed text-haze">
-            Seratus tiket. Satu gerbang. Ribuan tangan di detik yang sama. Lonjak
-            dibangun untuk bertahan saat trafiknya meledak, dan memastikan tiket
-            ke-101 tidak pernah ada.
+            A hundred tickets. One gate. Thousands of hands in the same second.
+            Lonjak is built to stay standing when traffic explodes, and to make
+            sure ticket number 101 never exists.
           </p>
           <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.25em] text-paper/70">
-            Tanpa daftar <span className="text-acid">/</span> Token unik per pembeli{" "}
-            <span className="text-acid">/</span> Anti-calo di level database
+            No sign-up <span className="text-acid">/</span> Unique token per buyer{" "}
+            <span className="text-acid">/</span> Anti-scalping at the database level
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export default function HomePage() {
       <section className="relative z-10 mx-auto max-w-[1400px] px-6 py-20">
         <Reveal>
           <h2 className="max-w-[20ch] font-display text-4xl uppercase leading-none md:text-6xl">
-            Yang dijual bukan tiket, tapi <span className="text-acid">ketahanan</span>
+            What we sell is not tickets, but <span className="text-acid">resilience</span>
           </h2>
         </Reveal>
         <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-ink-line bg-ink-line md:grid-cols-3">
@@ -160,10 +160,10 @@ export default function HomePage() {
       <section className="relative z-10 mx-auto max-w-[1400px] px-6 pb-8">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.4em] text-flame">
-            Anatomi satu drop
+            Anatomy of one drop
           </p>
           <h2 className="mt-3 max-w-[18ch] font-display text-4xl uppercase leading-none md:text-6xl">
-            Dari antrean ke tiket dalam empat langkah
+            From queue to ticket in four steps
           </h2>
         </Reveal>
         <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-ink-line bg-ink-line sm:grid-cols-2 md:grid-cols-4">
@@ -191,20 +191,20 @@ export default function HomePage() {
           />
           <div className="relative z-10">
             <p className="font-mono text-xs uppercase tracking-[0.4em] text-acid">
-              Gerbang menutup tanpa aba-aba
+              The gate closes without warning
             </p>
             <h2 className="mt-4 max-w-[16ch] font-display text-5xl uppercase leading-[0.9] md:text-7xl">
-              Seratus tiket. Satu detik. Siapa cepat.
+              A hundred tickets. One second. First come, first served.
             </h2>
             <p className="mt-5 max-w-[46ch] text-base leading-relaxed text-haze">
-              Tidak ada babak kedua. Begitu stok habis, drop selesai. Amankan
-              tempatmu sebelum yang lain.
+              There is no second round. The moment stock runs out, the drop is
+              over. Lock in your spot before everyone else.
             </p>
             <a
               href="#tiket"
               className="mt-8 inline-flex items-center gap-3 rounded-full bg-acid px-8 py-4 font-display text-xl uppercase tracking-wide text-ink transition-colors hover:bg-acid-deep"
             >
-              Ke tiket
+              Go to tickets
               <span aria-hidden>&rarr;</span>
             </a>
           </div>
@@ -215,7 +215,7 @@ export default function HomePage() {
         <div className="mx-auto flex max-w-[1400px] flex-col items-center gap-1 px-6 py-5 text-center sm:flex-row sm:justify-between sm:text-left">
           <span className="font-display text-base uppercase tracking-wide">Lonjak</span>
           <span className="font-mono text-[11px] uppercase tracking-widest text-haze">
-            &copy; 2026 Lonjak. Seluruh hak cipta dilindungi.
+            &copy; 2026 Lonjak. All rights reserved.
           </span>
         </div>
       </footer>
