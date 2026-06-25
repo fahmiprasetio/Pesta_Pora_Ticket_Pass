@@ -21,7 +21,7 @@ export default function StockBadge({
       className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-xs uppercase tracking-widest ${tone}`}
     >
       <span className={`h-2 w-2 rounded-full ${dot}`} />
-      {soldOut ? "Sold out" : `Sisa ${remaining} / ${total}`}
+      {soldOut ? "Sold out" : `${remaining} / ${total} left`}
     </div>
   );
 }
