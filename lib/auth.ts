@@ -18,7 +18,7 @@ export async function signUp(
     options: { data: { full_name: fullName } },
   });
   if (error) throw new Error(error.message);
-  // Jika email confirmation aktif, session belum terbentuk.
+  // If email confirmation is enabled, the session is not created yet.
   return { needsConfirmation: !data.session };
 }
 

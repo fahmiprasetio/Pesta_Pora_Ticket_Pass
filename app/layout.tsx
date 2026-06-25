@@ -24,9 +24,9 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LONJAK / Ticket Drop Tahan Lonjakan",
+  title: "LONJAK / Surge-Proof Ticket Drop",
   description:
-    "Flash sale tiket konser yang tahan lonjakan trafik dan anti-overselling. Dibangun di atas Next.js dan Supabase.",
+    "A concert ticket flash sale that withstands traffic surges and prevents overselling. Built on Next.js and Supabase.",
 };
 
 export default function RootLayout({
@@ -36,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="id"
+      lang="en"
       className={`${anton.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}
     >
       <body className="bg-ink text-paper antialiased">

@@ -130,7 +130,7 @@ export default function CheckoutPage() {
     }
 
     if (!res.snap_token || !window.snap) {
-      setError("Pembayaran belum siap. Coba lagi sebentar.");
+      setError("Payment is not ready yet. Please try again shortly.");
       setProcessing(false);
       return;
     }
@@ -142,16 +142,18 @@ export default function CheckoutPage() {
           status: "confirmed",
           order_id: res.order_id,
           remaining_stock: res.remaining_stock,
-          message: "Pembayaran berhasil. Tiket dikonfirmasi.",
+          message: "Payment successful. Ticket confirmed.",
         });
         router.push("/result");
       },
       onPending: () => {
-        setError("Pembayaran tertunda. Status tiket diperbarui otomatis setelah lunas.");
+        setError(
+          "Payment pending. Your ticket status updates automatically once it is paid."
+        );
         setProcessing(false);
       },
       onError: () => {
-        setError("Pembayaran gagal. Slot dilepas, silakan coba lagi.");
+        setError("Payment failed. The slot was released, please try again.");
         setProcessing(false);
       },
       onClose: () => {
@@ -171,18 +173,18 @@ export default function CheckoutPage() {
         await paySimulation();
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Gagal memproses");
+      setError(e instanceof Error ? e.message : "Failed to process");
       setProcessing(false);
     }
   }
 
   const buttonLabel = (() => {
-    if (!product) return "Memuat...";
-    if (product.remaining_stock <= 0) return "Tiket Habis";
-    if (processing) return "Memproses...";
+    if (!product) return "Loading...";
+    if (product.remaining_stock <= 0) return "Sold Out";
+    if (processing) return "Processing...";
     return USE_MIDTRANS
-      ? "Bayar dengan Midtrans"
-      : "Konfirmasi Pembayaran (Simulasi)";
+      ? "Pay with Midtrans"
+      : "Confirm Payment (Simulation)";
   })();
 
   return (
@@ -209,8 +211,8 @@ export default function CheckoutPage() {
         </h1>
         <p className="mt-3 font-mono text-xs uppercase tracking-[0.3em] text-haze">
           {USE_MIDTRANS
-            ? "Pembayaran via Midtrans (mode sandbox)"
-            : "Langkah terakhir mengamankan tiket"}
+            ? "Payment via Midtrans (sandbox mode)"
+            : "Final step to secure your ticket"}
         </p>
 
         {loading ? (
@@ -238,9 +240,9 @@ export default function CheckoutPage() {
             </div>
 
             <div className="space-y-3 p-6">
-              <Row label="Tiket" value="1 x Festival Pass" />
-              <Row label="Harga" value={formatRupiah(product.price)} />
-              <Row label="Biaya layanan" value="Gratis" />
+              <Row label="Ticket" value="1 x Festival Pass" />
+              <Row label="Price" value={formatRupiah(product.price)} />
+              <Row label="Service fee" value="Free" />
               <div className="my-4 border-t border-dashed border-ink-line" />
               <div className="flex items-center justify-between">
                 <span className="font-display text-xl uppercase">Total</span>
@@ -253,8 +255,8 @@ export default function CheckoutPage() {
             <div className="border-t border-ink-line bg-ink p-6">
               <p className="mb-4 text-center font-mono text-[11px] uppercase tracking-widest text-haze">
                 {USE_MIDTRANS
-                  ? "Slot stok dikunci dulu, lalu pembayaran diproses lewat Midtrans Snap."
-                  : "Pembayaran disimulasikan. Klik konfirmasi untuk memesan slot stok."}
+                  ? "The stock slot is locked first, then payment is processed via Midtrans Snap."
+                  : "Payment is simulated. Click confirm to reserve a stock slot."}
               </p>
               <MagneticButton
                 onClick={confirm}
@@ -277,7 +279,7 @@ export default function CheckoutPage() {
         ) : (
           <div className="mt-8 rounded-2xl border border-flame/50 bg-ink-soft p-6">
             <p className="font-mono text-xs uppercase tracking-widest text-flame">
-              Gagal memuat
+              Failed to load
             </p>
             <p className="mt-2 text-sm text-haze">{error}</p>
           </div>

@@ -26,7 +26,7 @@ function normalize(row: OrderRow): OrderItem | null {
   };
 }
 
-// Riwayat tiket milik user yang sedang login (RLS membatasi ke baris sendiri).
+// Ticket history for the signed-in user (RLS limits results to their own rows).
 export async function getMyOrders(): Promise<OrderItem[]> {
   const supabase = getSupabaseBrowser();
   const { data: userData } = await supabase.auth.getUser();
@@ -47,7 +47,7 @@ export async function getMyOrders(): Promise<OrderItem[]> {
     .filter((item): item is OrderItem => item !== null);
 }
 
-// Satu tiket berdasarkan id order. RLS memastikan hanya pemilik yang bisa baca.
+// A single ticket by order id. RLS ensures only the owner can read it.
 export async function getOrderById(id: string): Promise<OrderItem | null> {
   const supabase = getSupabaseBrowser();
   const { data: userData } = await supabase.auth.getUser();
