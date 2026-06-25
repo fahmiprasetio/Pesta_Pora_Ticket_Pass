@@ -72,7 +72,7 @@ export default function HomePage() {
 
       <NavBar />
 
-      <section className="relative z-10 mx-auto grid max-w-[1400px] grid-cols-1 gap-10 px-6 pb-16 pt-6 lg:grid-cols-[1.3fr_0.7fr] lg:items-center lg:gap-16 lg:pt-12">
+      <section className="relative z-10 mx-auto grid max-w-[1400px] grid-cols-1 gap-8 px-6 pb-12 pt-4 lg:grid-cols-[1.4fr_0.6fr] lg:items-center lg:gap-12 lg:pt-8">
         <div>
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-2 rounded-full border border-acid/40 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.3em] text-acid">
@@ -86,29 +86,29 @@ export default function HomePage() {
               {EVENT.tier}
             </span>
           </div>
-          <h1 className="mt-5 font-display text-[clamp(3.5rem,12vw,11rem)] uppercase leading-[0.82]">
+          <h1 className="mt-4 font-display text-[clamp(2.25rem,6vw,5rem)] uppercase leading-[0.85]">
             {EVENT.name}
             <span className="block text-stroke-acid">{EVENT.edition}</span>
           </h1>
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-sm uppercase tracking-widest text-haze">
+          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-xs uppercase tracking-widest text-haze">
             <span>{EVENT.dateLabel}</span>
             <span className="h-1 w-1 rounded-full bg-acid" />
             <span>{EVENT.venue}</span>
             <span className="h-1 w-1 rounded-full bg-acid" />
             <span>{EVENT.gates}</span>
           </div>
-          <p className="mt-6 max-w-[46ch] text-base leading-relaxed text-haze">
+          <p className="mt-5 max-w-[46ch] text-sm leading-relaxed text-haze">
             A hundred tickets. One gate. Thousands of hands in the same second.
             Lonjak is built to stay standing when traffic explodes, and to make
             sure ticket number 101 never exists.
           </p>
-          <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.25em] text-paper/70">
+          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.25em] text-paper/70">
             No sign-up <span className="text-acid">/</span> Unique token per buyer{" "}
             <span className="text-acid">/</span> Anti-scalping at the database level
           </p>
         </div>
 
-        <div id="tiket" className="scroll-mt-24 lg:pl-4">
+        <div id="tiket" className="w-full scroll-mt-24 lg:max-w-sm lg:justify-self-end lg:pl-4">
           <ProductCard />
         </div>
       </section>

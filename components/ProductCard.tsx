@@ -128,18 +128,18 @@ export default function ProductCard() {
 
   if (loading) {
     return (
-      <div className="w-full animate-pulse rounded-2xl border border-ink-line bg-ink-soft p-6">
+      <div className="w-full animate-pulse rounded-2xl border border-ink-line bg-ink-soft p-5">
         <div className="h-4 w-32 rounded bg-ink-line" />
-        <div className="mt-5 h-10 w-full rounded bg-ink-line" />
-        <div className="mt-6 h-24 w-full rounded bg-ink-line" />
-        <div className="mt-6 h-12 w-full rounded bg-ink-line" />
+        <div className="mt-4 h-8 w-full rounded bg-ink-line" />
+        <div className="mt-5 h-20 w-full rounded bg-ink-line" />
+        <div className="mt-5 h-11 w-full rounded bg-ink-line" />
       </div>
     );
   }
 
   if (error || !product) {
     return (
-      <div className="w-full rounded-2xl border border-flame/50 bg-ink-soft p-6">
+      <div className="w-full rounded-2xl border border-flame/50 bg-ink-soft p-5">
         <p className="font-mono text-xs uppercase tracking-widest text-flame">
           Backend connection failed
         </p>
@@ -154,16 +154,16 @@ export default function ProductCard() {
   const soldOut = product.remaining_stock <= 0;
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl border border-ink-line bg-ink-soft/90 p-6 backdrop-blur">
+    <div className="relative w-full overflow-hidden rounded-2xl border border-ink-line bg-ink-soft/90 p-5 backdrop-blur">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-xs uppercase tracking-[0.3em] text-haze">
+        <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-haze">
           {product.tier ?? "Festival Pass"}
         </span>
         <StockBadge remaining={product.remaining_stock} total={product.total_stock} />
       </div>
 
       {live && (
-        <div className="mt-3 flex items-center justify-end gap-2">
+        <div className="mt-2 flex items-center justify-end gap-2">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-acid opacity-75" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-acid" />
@@ -174,15 +174,15 @@ export default function ProductCard() {
         </div>
       )}
 
-      <p className="mt-5 font-mono text-xs uppercase tracking-widest text-haze">
+      <p className="mt-4 font-mono text-[11px] uppercase tracking-widest text-haze">
         Price per ticket
       </p>
-      <p className="font-display text-5xl leading-none text-paper">
+      <p className="font-display text-4xl leading-none text-paper">
         {formatRupiah(product.price)}
       </p>
 
-      <div className="mt-6">
-        <p className="mb-2 font-mono text-xs uppercase tracking-widest text-haze">
+      <div className="mt-5">
+        <p className="mb-2 font-mono text-[11px] uppercase tracking-widest text-haze">
           Time until showtime
         </p>
         <Countdown target={product.event_date} />
@@ -191,7 +191,7 @@ export default function ProductCard() {
       <MagneticButton
         onClick={startPurchase}
         disabled={soldOut}
-        className="mt-7 w-full rounded-full bg-acid px-8 py-4 font-display text-xl uppercase tracking-wide text-ink hover:bg-acid-deep"
+        className="mt-6 w-full rounded-full bg-acid px-8 py-3 font-display text-lg uppercase tracking-wide text-ink hover:bg-acid-deep"
       >
         {soldOut ? "Sold Out" : "Buy Now"}
       </MagneticButton>
@@ -200,13 +200,13 @@ export default function ProductCard() {
         type="button"
         onClick={toggleWishlist}
         disabled={wishBusy}
-        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-full border px-8 py-3 font-mono text-xs uppercase tracking-widest transition-colors disabled:opacity-50 ${
+        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-full border px-8 py-2.5 font-mono text-[11px] uppercase tracking-widest transition-colors disabled:opacity-50 ${
           saved
             ? "border-acid text-acid"
             : "border-ink-line text-haze hover:border-paper hover:text-paper"
         }`}
       >
-        <span className={`text-base leading-none ${saved ? "text-acid" : ""}`}>
+        <span className={`text-sm leading-none ${saved ? "text-acid" : ""}`}>
           {saved ? "\u2665" : "\u2661"}
         </span>
         {user
@@ -216,7 +216,7 @@ export default function ProductCard() {
           : "Wishlist (sign in first)"}
       </button>
 
-      <p className="mt-3 text-center font-mono text-[11px] uppercase tracking-widest text-haze">
+      <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-widest text-haze">
         Anti-overselling guaranteed at the database level
       </p>
     </div>
