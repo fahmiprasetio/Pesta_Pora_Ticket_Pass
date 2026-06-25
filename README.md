@@ -38,6 +38,36 @@ Ada dua jalur transaksi yang memakai logika atomik yang sama:
   lalu webhook men-`confirmed` (atau `release_order` mengembalikan stok bila
   gagal/expire).
 
+## Ketahanan terhadap lonjakan (hardening)
+
+Web yang "asal jadi" biasanya tumbang saat ramai karena tiga hal: race condition
+(baca-cek-tulis di kode aplikasi), koneksi database habis, dan state disimpan di
+memori server. Lonjak menghindari ketiganya:
+
+- **Anti-overselling di database, bukan di JavaScript.** Pengurangan stok adalah
+  satu UPDATE atomik ber-row-lock (lihat `purchase_ticket`/`reserve_ticket`).
+  Postgres menserialkan ribuan request pada baris stok yang sama, jadi 100 tidak
+  pernah bisa jadi 101.
+- **Idempotensi.** Unique index `(product_id, buyer_token)` membuat klik/retry
+  berulang tetap menghasilkan satu order, bukan order ganda.
+- **Tanpa koneksi Postgres langsung.** Akses DB lewat Supabase REST (PostgREST)
+  via HTTPS, jadi fungsi serverless tidak membuka koneksi Postgres per request
+  dan tidak menghabiskan pool koneksi saat lonjakan. PostgREST yang mengelola
+  pool di sisi Supabase. (Bila suatu saat memakai koneksi langsung seperti
+  Prisma/`pg`, wajib pakai pooler Supabase: host `...pooler.supabase.com`,
+  port `6543`, transaction mode.)
+- **Stateless.** Semua kebenaran ada di Postgres, tidak ada counter di memori
+  instance, jadi aman saat Vercel menskala ke banyak instance.
+- **Index pada kolom panas.** Migrasi `0007_performance_indexes.sql` menambah
+  index pada `orders(status)`, `orders(created_at)`, dan
+  `orders(user_id, created_at)` agar statistik admin dan riwayat tiket tetap
+  cepat saat tabel membesar.
+- **Read path ringan.** Sisa stok di-push lewat Realtime, bukan di-polling, jadi
+  ribuan penonton tidak menghantam DB hanya untuk melihat angka stok.
+
+Sebelum demo: pastikan `NEXT_PUBLIC_PAYMENT_MODE=simulasi` untuk load test dan
+jalankan migrasi `0007` agar index aktif.
+
 ## Stok realtime
 
 Beranda berlangganan perubahan baris `products` lewat Supabase Realtime, jadi
@@ -75,6 +105,7 @@ paling mudah dilakukan setelah deploy ke Vercel. Daftarkan URL
 - **Wishlist**: untuk user login, ditampilkan di profil.
 - **Riwayat tiket (Tiket Saya)**: order sukses tercatat ke akun (RLS milik sendiri).
 - **E-tiket** (`/ticket/[id]`): QR verifikasi + barcode + data pemegang, bisa diunduh/cetak ke PDF.
+- **Verifikasi gerbang** (`/verify/[id]`): halaman publik untuk petugas men-scan QR e-tiket. Menampilkan VALID/INVALID + data event tanpa membocorkan identitas pembeli.
 - **Lineup**: daftar penampil bergaya poster festival.
 - **Dashboard admin** (`/admin`): statistik live (sisa stok, terjual, order, pembayaran) + reset stok lewat RPC `reset_demo()`.
 
@@ -86,9 +117,10 @@ paling mudah dilakukan setelah deploy ke Vercel. Daftarkan URL
 4. **Checkout** (`/checkout`): ringkasan order, bayar (Midtrans atau simulasi).
 5. **Hasil** (`/result`): Berhasil (+ Lihat E-Tiket) atau Sold Out.
 6. **E-Tiket** (`/ticket/[id]`): tiket + QR verifikasi + barcode, tombol unduh/cetak PDF.
-7. **Daftar / Masuk** (`/signup`, `/signin`).
-8. **Profil** (`/profile`): akun, Tiket Saya, wishlist.
-9. **Admin** (`/admin`): dashboard statistik live + reset stok demo (butuh token).
+7. **Verifikasi** (`/verify/[id]`): halaman publik untuk petugas men-scan QR di gerbang.
+8. **Daftar / Masuk** (`/signup`, `/signin`).
+9. **Profil** (`/profile`): akun, Tiket Saya, wishlist.
+10. **Admin** (`/admin`): dashboard statistik live + reset stok demo (butuh token).
 
 ## Setup lokal
 
@@ -108,7 +140,8 @@ Di Supabase SQL Editor, jalankan berurutan:
 4. `supabase/migrations/0004_reset_demo.sql`
 5. `supabase/migrations/0005_payment_midtrans.sql`
 6. `supabase/migrations/0006_realtime_products.sql`
-7. `supabase/seed.sql`
+7. `supabase/migrations/0007_performance_indexes.sql`
+8. `supabase/seed.sql`
 
 > Untuk demo lebih mulus, matikan konfirmasi email di Supabase:
 > Authentication -> Sign In / Providers -> Email -> nonaktifkan "Confirm email".
@@ -128,11 +161,16 @@ Buka http://localhost:3000
 
 ## Load testing (bukti elasticity)
 
-Pastikan `NEXT_PUBLIC_PAYMENT_MODE=simulasi`, lalu:
+Pastikan `NEXT_PUBLIC_PAYMENT_MODE=simulasi`, lalu (sesuaikan STOCK dengan stok
+seed, default 100):
 
 ```bash
-k6 run -e BASE_URL=https://APP-ANDA.vercel.app loadtest/k6-flashsale.js
+k6 run -e BASE_URL=https://APP-ANDA.vercel.app -e STOCK=100 loadtest/k6-flashsale.js
 ```
+
+Di akhir test, skrip mencetak ringkasan vonis (LULUS/GAGAL overselling) berisi
+jumlah tiket confirmed, sold_out, duplikat, error, gagal HTTP, dan p95 latency,
+lalu menyimpannya ke `loadtest/summary.json` sebagai bukti untuk video.
 
 Yang dibuktikan:
 
