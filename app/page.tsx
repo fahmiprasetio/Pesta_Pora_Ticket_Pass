@@ -212,10 +212,10 @@ export default function HomePage() {
       </section>
 
       <footer className="relative z-10 border-t border-ink-line">
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-6 py-10 md:flex-row md:items-center md:justify-between">
-          <span className="font-display text-xl uppercase">Lonjak</span>
-          <span className="font-mono text-xs uppercase tracking-widest text-haze">
-            Next.js + Supabase / Demo Cloud Computing
+        <div className="mx-auto flex max-w-[1400px] flex-col items-center gap-1 px-6 py-5 text-center sm:flex-row sm:justify-between sm:text-left">
+          <span className="font-display text-base uppercase tracking-wide">Lonjak</span>
+          <span className="font-mono text-[11px] uppercase tracking-widest text-haze">
+            &copy; 2026 Lonjak. Seluruh hak cipta dilindungi.
           </span>
         </div>
       </footer>
