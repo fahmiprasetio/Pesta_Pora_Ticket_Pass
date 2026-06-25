@@ -6,8 +6,8 @@ import Grain from "@/components/Grain";
 import NavBar from "@/components/NavBar";
 import TicketStub from "@/components/TicketStub";
 import MagneticButton from "@/components/MagneticButton";
-import { useAuth } from "@/components/AuthProvider";
 import { getOrderById, type OrderItem } from "@/lib/orders";
+import { rememberOrderId } from "@/lib/api";
 import { EVENT } from "@/lib/event";
 import { formatRupiah } from "@/lib/format";
 
@@ -30,24 +30,24 @@ export default function TicketPage() {
         ? params.id[0]
         : "";
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
   const [order, setOrder] = useState<OrderItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [missing, setMissing] = useState(false);
   const [verifyUrl, setVerifyUrl] = useState("");
 
   useEffect(() => {
-    if (!authLoading && !user) router.replace("/signin");
-  }, [authLoading, user, router]);
-
-  useEffect(() => {
-    if (!user || !id) return;
+    if (!id) return;
     let active = true;
     getOrderById(id)
       .then((o) => {
         if (!active) return;
-        if (!o) setMissing(true);
-        else setOrder(o);
+        if (!o) {
+          setMissing(true);
+        } else {
+          setOrder(o);
+          // Remember this ticket on the device so it shows up in My Tickets.
+          rememberOrderId(o.id);
+        }
       })
       .catch(() => {
         if (active) setMissing(true);
@@ -58,7 +58,7 @@ export default function TicketPage() {
     return () => {
       active = false;
     };
-  }, [user, id]);
+  }, [id]);
 
   useEffect(() => {
     if (order && typeof window !== "undefined") {
@@ -70,16 +70,6 @@ export default function TicketPage() {
     if (typeof window !== "undefined") window.print();
   }
 
-  if (authLoading || !user) {
-    return <main className="min-h-[100dvh] bg-ink" />;
-  }
-
-  const holder =
-    typeof user.user_metadata?.full_name === "string" &&
-    user.user_metadata.full_name
-      ? user.user_metadata.full_name
-      : (user.email ?? "Lonjak fan");
-
   return (
     <main className="relative min-h-[100dvh] overflow-clip">
       <Grain />
@@ -89,12 +79,12 @@ export default function TicketPage() {
       />
       <NavBar />
 
-      <section className="relative z-10 mx-auto max-w-2xl px-6 py-12">
+      <section className="relative z-10 mx-auto max-w-2xl px-6 pb-12 pt-24">
         <Link
-          href="/profile"
+          href="/tickets"
           className="no-print font-mono text-xs uppercase tracking-[0.3em] text-haze transition-colors hover:text-acid"
         >
-          Back to profile
+          Back to my tickets
         </Link>
 
         {loading ? (
@@ -115,7 +105,7 @@ export default function TicketPage() {
                 code={`ID ${order.id.slice(0, 8).toUpperCase()}`}
                 qrValue={verifyUrl || order.id}
                 lines={[
-                  { label: "Holder", value: holder },
+                  { label: "Ticket", value: "Bearer / 1 Admission" },
                   { label: "Date", value: EVENT.dateLabel },
                   { label: "Venue", value: order.product.venue ?? EVENT.venue },
                   { label: "Price", value: formatRupiah(order.product.price) },
@@ -144,9 +134,9 @@ export default function TicketPage() {
               </p>
               <p className="mt-2 max-w-[52ch] text-sm text-haze">
                 Staff scan the QR at the gate. It opens a public verification
-                page that confirms the ticket is valid without exposing your
-                account details, and the order id is permanently recorded in the
-                database as proof of purchase.
+                page that confirms the ticket is valid, and the order id is
+                permanently recorded in the database as proof of purchase. This
+                ticket is a bearer pass: keep the link private.
               </p>
               {verifyUrl && (
                 <p className="mt-2 break-all font-mono text-[11px] text-haze">
@@ -163,10 +153,10 @@ export default function TicketPage() {
                 Download / Print E-Ticket
               </MagneticButton>
               <Link
-                href="/profile"
+                href="/tickets"
                 className="inline-flex items-center rounded-full border border-ink-line px-8 py-4 font-mono text-xs uppercase tracking-widest text-haze transition-colors hover:border-acid hover:text-acid"
               >
-                Back to profile
+                My tickets
               </Link>
             </div>
             <p className="no-print mt-3 font-mono text-[11px] uppercase tracking-widest text-haze">
@@ -180,15 +170,15 @@ export default function TicketPage() {
             </h1>
             <p className="mx-auto mt-3 max-w-[40ch] text-sm text-haze">
               {missing
-                ? "This ticket does not exist or does not belong to your account."
+                ? "This ticket does not exist. Check the link and try again."
                 : "This ticket could not be loaded right now."}
             </p>
             <div className="mt-6 flex justify-center">
               <MagneticButton
-                onClick={() => router.push("/profile")}
+                onClick={() => router.push("/")}
                 className="rounded-full border border-ink-line bg-ink px-8 py-3 font-mono text-xs uppercase tracking-widest text-paper hover:border-acid hover:text-acid"
               >
-                To profile
+                Back to home
               </MagneticButton>
             </div>
           </div>

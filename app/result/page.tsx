@@ -5,20 +5,23 @@ import Link from "next/link";
 import Grain from "@/components/Grain";
 import TicketStub from "@/components/TicketStub";
 import MagneticButton from "@/components/MagneticButton";
-import { useAuth } from "@/components/AuthProvider";
 import type { PurchaseResult } from "@/lib/types";
 import { EVENT } from "@/lib/event";
-import { readResult } from "@/lib/api";
+import { readResult, rememberOrderId } from "@/lib/api";
 
 export default function ResultPage() {
   const router = useRouter();
-  const { user } = useAuth();
   const [result, setResult] = useState<PurchaseResult | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setResult(readResult());
+    const r = readResult();
+    setResult(r);
     setReady(true);
+    if (r?.success && r.status === "confirmed" && r.order_id) {
+      // Save the ticket to this device so it appears under My Tickets.
+      rememberOrderId(r.order_id);
+    }
   }, []);
 
   if (!ready) {
@@ -28,7 +31,7 @@ export default function ResultPage() {
   const success = Boolean(result?.success) && result?.status === "confirmed";
   const soldOut = result?.status === "sold_out";
   const orderId = result?.order_id ?? "";
-  const canViewTicket = Boolean(user) && success && orderId.length > 0;
+  const canViewTicket = success && orderId.length > 0;
 
   return (
     <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-clip px-6 py-16">
@@ -75,23 +78,17 @@ export default function ResultPage() {
                 ? "This token already holds a ticket. The system automatically rejects duplicate purchases."
                 : "Stock was decremented atomically in the database. Your order id is unique and permanently recorded."}
             </p>
-            {canViewTicket ? (
+            {canViewTicket && (
               <Link
                 href={`/ticket/${orderId}`}
                 className="mt-6 inline-block rounded-full bg-acid px-7 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-acid-deep"
               >
                 View E-Ticket
               </Link>
-            ) : (
-              success && (
-                <Link
-                  href="/signin"
-                  className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-haze underline transition-colors hover:text-acid"
-                >
-                  Sign in to save this ticket to your account
-                </Link>
-              )
             )}
+            <p className="mt-4 max-w-[44ch] text-center font-mono text-[11px] uppercase tracking-widest text-haze">
+              Saved to this device. Find it anytime under My Tickets.
+            </p>
           </div>
         ) : soldOut ? (
           <div className="flex flex-col items-center text-center">
