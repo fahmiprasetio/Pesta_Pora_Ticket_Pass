@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
-// QR code via layanan render gratis (tanpa menambah paket npm). Mengencode
-// URL/teks apa pun jadi gambar PNG hitam-putih yang aman untuk dicetak.
+// QR code rendered via a free render service (no extra npm package). Encodes
+// any URL/text into a black-and-white PNG image that is safe to print.
 export default function QrCode({
   value,
   size = 200,
@@ -17,7 +17,7 @@ export default function QrCode({
   return (
     <img
       src={src}
-      alt="QR code verifikasi tiket"
+      alt="Ticket verification QR code"
       width={size}
       height={size}
       className="block h-auto rounded-lg bg-paper"
