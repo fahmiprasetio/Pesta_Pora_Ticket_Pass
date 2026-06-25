@@ -72,7 +72,7 @@ export default function HomePage() {
 
       <NavBar />
 
-      <section className="relative z-10 mx-auto grid max-w-[1400px] grid-cols-1 gap-8 px-6 pb-12 pt-4 lg:grid-cols-[1.4fr_0.6fr] lg:items-center lg:gap-12 lg:pt-8">
+      <section className="relative z-10 mx-auto grid max-w-[1400px] grid-cols-1 gap-8 px-6 pb-12 pt-4 lg:grid-cols-[1.3fr_0.7fr] lg:items-center lg:gap-12 lg:pt-8">
         <div>
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-2 rounded-full border border-acid/40 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.3em] text-acid">
@@ -97,18 +97,13 @@ export default function HomePage() {
             <span className="h-1 w-1 rounded-full bg-acid" />
             <span>{EVENT.gates}</span>
           </div>
-          <p className="mt-5 max-w-[46ch] text-sm leading-relaxed text-haze">
-            A hundred tickets. One gate. Thousands of hands in the same second.
-            Lonjak is built to stay standing when traffic explodes, and to make
-            sure ticket number 101 never exists.
-          </p>
-          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.25em] text-paper/70">
-            No sign-up <span className="text-acid">/</span> Unique token per buyer{" "}
-            <span className="text-acid">/</span> Anti-scalping at the database level
+          <p className="mt-5 max-w-[42ch] text-sm leading-relaxed text-haze">
+            A hundred tickets, one gate, thousands of buyers in the same second.
+            Built to survive the surge without ever overselling.
           </p>
         </div>
 
-        <div id="tiket" className="w-full scroll-mt-24 lg:max-w-sm lg:justify-self-end lg:pl-4">
+        <div id="tiket" className="w-full scroll-mt-24 lg:max-w-md lg:justify-self-end lg:pl-4">
           <ProductCard />
         </div>
       </section>

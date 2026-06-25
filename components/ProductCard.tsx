@@ -7,13 +7,7 @@ import {
   rememberProductId,
   resetBuyerToken,
 } from "@/lib/api";
-import {
-  addToWishlist,
-  isInWishlist,
-  removeFromWishlist,
-} from "@/lib/wishlist";
 import { getSupabaseBrowser } from "@/lib/supabaseClient";
-import { useAuth } from "@/components/AuthProvider";
 import { formatRupiah } from "@/lib/format";
 import StockBadge from "@/components/StockBadge";
 import Countdown from "@/components/Countdown";
@@ -21,12 +15,9 @@ import MagneticButton from "@/components/MagneticButton";
 
 export default function ProductCard() {
   const router = useRouter();
-  const { user } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saved, setSaved] = useState(false);
-  const [wishBusy, setWishBusy] = useState(false);
   const [live, setLive] = useState(false);
 
   useEffect(() => {
@@ -87,43 +78,11 @@ export default function ProductCard() {
     };
   }, [productId]);
 
-  useEffect(() => {
-    if (user && product) {
-      isInWishlist(product.id)
-        .then(setSaved)
-        .catch(() => setSaved(false));
-    } else {
-      setSaved(false);
-    }
-  }, [user, product]);
-
   function startPurchase() {
     if (!product) return;
     resetBuyerToken();
     rememberProductId(product.id);
     router.push("/waiting");
-  }
-
-  async function toggleWishlist() {
-    if (!product) return;
-    if (!user) {
-      router.push("/signin");
-      return;
-    }
-    setWishBusy(true);
-    try {
-      if (saved) {
-        await removeFromWishlist(product.id);
-        setSaved(false);
-      } else {
-        await addToWishlist(product.id);
-        setSaved(true);
-      }
-    } catch {
-      // ignore, keep current state
-    } finally {
-      setWishBusy(false);
-    }
   }
 
   if (loading) {
@@ -155,7 +114,7 @@ export default function ProductCard() {
 
   return (
     <div className="relative w-full overflow-hidden rounded-2xl border border-ink-line bg-ink-soft/90 p-5 backdrop-blur">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <span className="font-mono text-[11px] uppercase tracking-[0.3em] text-haze">
           {product.tier ?? "Festival Pass"}
         </span>
@@ -195,26 +154,6 @@ export default function ProductCard() {
       >
         {soldOut ? "Sold Out" : "Buy Now"}
       </MagneticButton>
-
-      <button
-        type="button"
-        onClick={toggleWishlist}
-        disabled={wishBusy}
-        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-full border px-8 py-2.5 font-mono text-[11px] uppercase tracking-widest transition-colors disabled:opacity-50 ${
-          saved
-            ? "border-acid text-acid"
-            : "border-ink-line text-haze hover:border-paper hover:text-paper"
-        }`}
-      >
-        <span className={`text-sm leading-none ${saved ? "text-acid" : ""}`}>
-          {saved ? "\u2665" : "\u2661"}
-        </span>
-        {user
-          ? saved
-            ? "Saved to Wishlist"
-            : "Save to Wishlist"
-          : "Wishlist (sign in first)"}
-      </button>
 
       <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-widest text-haze">
         Anti-overselling guaranteed at the database level
