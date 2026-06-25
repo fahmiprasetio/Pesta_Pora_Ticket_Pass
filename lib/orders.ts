@@ -15,6 +15,17 @@ type OrderRow = {
   product: Product | Product[] | null;
 };
 
+function normalize(row: OrderRow): OrderItem | null {
+  const product = Array.isArray(row.product) ? row.product[0] : row.product;
+  if (!product) return null;
+  return {
+    id: row.id,
+    status: row.status,
+    created_at: row.created_at,
+    product,
+  };
+}
+
 // Riwayat tiket milik user yang sedang login (RLS membatasi ke baris sendiri).
 export async function getMyOrders(): Promise<OrderItem[]> {
   const supabase = getSupabaseBrowser();
@@ -32,14 +43,23 @@ export async function getMyOrders(): Promise<OrderItem[]> {
 
   const rows = (data ?? []) as unknown as OrderRow[];
   return rows
-    .map((row) => {
-      const product = Array.isArray(row.product) ? row.product[0] : row.product;
-      return {
-        id: row.id,
-        status: row.status,
-        created_at: row.created_at,
-        product,
-      };
-    })
-    .filter((item): item is OrderItem => Boolean(item.product));
+    .map(normalize)
+    .filter((item): item is OrderItem => item !== null);
+}
+
+// Satu tiket berdasarkan id order. RLS memastikan hanya pemilik yang bisa baca.
+export async function getOrderById(id: string): Promise<OrderItem | null> {
+  const supabase = getSupabaseBrowser();
+  const { data: userData } = await supabase.auth.getUser();
+  if (!userData.user?.id) return null;
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select("id, status, created_at, product:products(*)")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+
+  return normalize(data as unknown as OrderRow);
 }

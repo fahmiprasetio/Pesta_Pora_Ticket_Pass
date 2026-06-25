@@ -5,12 +5,14 @@ import Link from "next/link";
 import Grain from "@/components/Grain";
 import TicketStub from "@/components/TicketStub";
 import MagneticButton from "@/components/MagneticButton";
+import { useAuth } from "@/components/AuthProvider";
 import type { PurchaseResult } from "@/lib/types";
 import { EVENT } from "@/lib/event";
 import { readResult } from "@/lib/api";
 
 export default function ResultPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [result, setResult] = useState<PurchaseResult | null>(null);
   const [ready, setReady] = useState(false);
 
@@ -25,6 +27,8 @@ export default function ResultPage() {
 
   const success = Boolean(result?.success) && result?.status === "confirmed";
   const soldOut = result?.status === "sold_out";
+  const orderId = result?.order_id ?? "";
+  const canViewTicket = Boolean(user) && success && orderId.length > 0;
 
   return (
     <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-clip px-6 py-16">
@@ -58,7 +62,7 @@ export default function ResultPage() {
                   : "E-Ticket / Festival Pass"
               }
               title={`${EVENT.name} ${EVENT.edition}`}
-              code={`ID ${(result.order_id ?? "").slice(0, 8).toUpperCase()}`}
+              code={`ID ${orderId.slice(0, 8).toUpperCase()}`}
               lines={[
                 { label: "Tanggal", value: EVENT.dateLabel },
                 { label: "Lokasi", value: EVENT.venue },
@@ -71,6 +75,23 @@ export default function ResultPage() {
                 ? "Token ini sudah memegang satu tiket. Sistem menolak pembelian ganda secara otomatis."
                 : "Stok dikurangi secara atomik di database. Order id kamu unik dan tercatat permanen."}
             </p>
+            {canViewTicket ? (
+              <Link
+                href={`/ticket/${orderId}`}
+                className="mt-6 inline-block rounded-full bg-acid px-7 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-acid-deep"
+              >
+                Lihat E-Tiket
+              </Link>
+            ) : (
+              success && (
+                <Link
+                  href="/signin"
+                  className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-haze underline transition-colors hover:text-acid"
+                >
+                  Masuk untuk menyimpan tiket ke akun
+                </Link>
+              )
+            )}
           </div>
         ) : soldOut ? (
           <div className="flex flex-col items-center text-center">

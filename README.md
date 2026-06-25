@@ -40,7 +40,13 @@ server) saat pembeli login, dan `null` untuk pembelian anonim atau load test.
 - **Riwayat tiket (Tiket Saya)**: order yang sukses tercatat ke akun lewat `user_id`
   terverifikasi, lalu ditampilkan di profil. Dilindungi RLS (user hanya bisa
   melihat order miliknya sendiri).
+- **E-tiket**: setiap order sukses punya halaman tiket sendiri (`/ticket/[id]`)
+  lengkap dengan barcode, data pemegang, dan order id. Bisa dibuka dari halaman
+  hasil maupun dari profil.
 - **Lineup**: halaman daftar penampil bergaya poster festival.
+- **Panel admin demo** (`/admin`): reset stok ke penuh dan hapus order untuk
+  mengulang drop saat merekam video. Dilindungi token (`ADMIN_RESET_TOKEN`) dan
+  dieksekusi lewat RPC `reset_demo()` memakai service role.
 
 ## Alur halaman
 
@@ -48,9 +54,11 @@ server) saat pembeli login, dan `null` untuk pembelian anonim atau load test.
 2. **Lineup** (`/lineup`): daftar penampil, jadwal panggung.
 3. **Ruang Tunggu** (`/waiting`): virtual waiting room, posisi antrean menurun.
 4. **Checkout** (`/checkout`): ringkasan order, tombol Konfirmasi Pembayaran (Simulasi).
-5. **Hasil** (`/result`): Berhasil (order id + sisa stok) atau Sold Out.
-6. **Daftar / Masuk** (`/signup`, `/signin`): autentikasi email + password.
-7. **Profil** (`/profile`): data akun, tombol keluar, riwayat Tiket Saya, dan wishlist.
+5. **Hasil** (`/result`): Berhasil (order id + sisa stok + tombol Lihat E-Tiket) atau Sold Out.
+6. **E-Tiket** (`/ticket/[id]`): tampilan tiket + barcode untuk order tertentu.
+7. **Daftar / Masuk** (`/signup`, `/signin`): autentikasi email + password.
+8. **Profil** (`/profile`): data akun, tombol keluar, riwayat Tiket Saya, dan wishlist.
+9. **Admin** (`/admin`): reset stok demo (butuh token).
 
 Pembayaran hanya disimulasikan. Tidak ada integrasi payment gateway.
 
@@ -69,7 +77,8 @@ Di Supabase SQL Editor, jalankan berurutan (paste isi file, lalu Run):
 1. `supabase/migrations/0001_init.sql` (tabel products/orders + fungsi RPC + RLS)
 2. `supabase/migrations/0002_auth_wishlist.sql` (tabel profiles + wishlists + trigger profil + RLS)
 3. `supabase/migrations/0003_orders_user.sql` (kolom user_id pada orders + RPC ber-user_id + RLS riwayat tiket)
-4. `supabase/seed.sql` (1 produk, stok 100)
+4. `supabase/migrations/0004_reset_demo.sql` (fungsi reset_demo untuk panel admin)
+5. `supabase/seed.sql` (1 produk, stok 100)
 
 > Untuk demo lebih mulus, matikan konfirmasi email di Supabase:
 > Authentication -> Sign In / Providers -> Email -> nonaktifkan "Confirm email".
@@ -83,6 +92,7 @@ Salin `.env.example` menjadi `.env.local` lalu isi:
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
+ADMIN_RESET_TOKEN=token-rahasia-bebas
 ```
 
 ### 4. Jalankan
@@ -107,12 +117,13 @@ Yang dibuktikan:
 - Sisa request menghasilkan `tickets_sold_out`.
 - Di Supabase, `remaining_stock` akhir = 0 dan tidak pernah minus.
 
-Untuk reset demo: jalankan ulang `supabase/seed.sql` lalu `delete from public.orders;`.
+Untuk reset demo: buka `/admin`, masukkan `ADMIN_RESET_TOKEN`, klik reset. Atau
+jalankan ulang `supabase/seed.sql` lalu `delete from public.orders;`.
 
 ## Deploy ke Vercel
 
 1. Import repo ke Vercel.
-2. Tambahkan tiga environment variable yang sama seperti `.env.local`.
+2. Tambahkan environment variable yang sama seperti `.env.local` (termasuk `ADMIN_RESET_TOKEN`).
 3. Deploy. Vercel menangani autoscaling serverless (rapid elasticity).
 
 ## Pemetaan karakteristik NIST (untuk narasi video)

@@ -193,9 +193,10 @@ export default function ProfilePage() {
               ) : (
                 <div className="mt-6 space-y-4">
                   {orders.map((order) => (
-                    <div
+                    <Link
                       key={order.id}
-                      className="flex items-center justify-between gap-4 rounded-2xl border border-acid/30 bg-ink-soft p-5"
+                      href={`/ticket/${order.id}`}
+                      className="flex items-center justify-between gap-4 rounded-2xl border border-acid/30 bg-ink-soft p-5 transition-colors hover:border-acid"
                     >
                       <div>
                         <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-acid">
@@ -216,10 +217,10 @@ export default function ProfilePage() {
                           {order.id.slice(0, 8).toUpperCase()}
                         </p>
                         <span className="mt-2 inline-block rounded-full border border-acid px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-acid">
-                          Confirmed
+                          Lihat tiket
                         </span>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}
