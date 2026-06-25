@@ -18,6 +18,9 @@ export interface Order {
   buyer_token: string;
   user_id: string | null;
   status: string;
+  payment_status?: string;
+  payment_provider?: string | null;
+  payment_ref?: string | null;
   created_at: string;
 }
 
@@ -31,4 +34,13 @@ export interface PurchaseResult {
   already_purchased?: boolean;
   message: string;
   buyer_token?: string;
+}
+
+export interface CreatePaymentResult {
+  status: "pending" | "confirmed" | "sold_out";
+  order_id: string | null;
+  remaining_stock: number;
+  snap_token?: string;
+  already_reserved?: boolean;
+  message: string;
 }

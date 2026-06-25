@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Script from "next/script";
 import Grain from "@/components/Grain";
 import MagneticButton from "@/components/MagneticButton";
 import StockBadge from "@/components/StockBadge";
 import type { Product } from "@/lib/types";
 import { EVENT } from "@/lib/event";
 import {
+  createPayment,
   fetchProduct,
   getBuyerToken,
   getRememberedProductId,
@@ -17,6 +19,28 @@ import {
 } from "@/lib/api";
 import { getSupabaseBrowser } from "@/lib/supabaseClient";
 import { formatRupiah } from "@/lib/format";
+
+type SnapCallbacks = {
+  onSuccess?: (result: unknown) => void;
+  onPending?: (result: unknown) => void;
+  onError?: (result: unknown) => void;
+  onClose?: () => void;
+};
+
+declare global {
+  interface Window {
+    snap?: { pay: (token: string, callbacks: SnapCallbacks) => void };
+  }
+}
+
+const PAYMENT_MODE = process.env.NEXT_PUBLIC_PAYMENT_MODE ?? "simulasi";
+const MIDTRANS_CLIENT_KEY = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY ?? "";
+const MIDTRANS_IS_PRODUCTION =
+  process.env.NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION === "true";
+const SNAP_SRC = MIDTRANS_IS_PRODUCTION
+  ? "https://app.midtrans.com/snap/snap.js"
+  : "https://app.sandbox.midtrans.com/snap/snap.js";
+const USE_MIDTRANS = PAYMENT_MODE === "midtrans" && MIDTRANS_CLIENT_KEY !== "";
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -33,6 +57,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
+  const [snapReady, setSnapReady] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -54,32 +79,122 @@ export default function CheckoutPage() {
     };
   }, []);
 
+  async function getAccessToken(): Promise<string | undefined> {
+    try {
+      const { data } = await getSupabaseBrowser().auth.getSession();
+      return data.session?.access_token ?? undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
+  async function paySimulation() {
+    if (!product) return;
+    const productId = getRememberedProductId() ?? product.id;
+    const token = getBuyerToken();
+    const accessToken = await getAccessToken();
+    const result = await purchaseTicket(productId, token, accessToken);
+    storeResult(result);
+    router.push("/result");
+  }
+
+  async function payMidtrans() {
+    if (!product) return;
+    const productId = getRememberedProductId() ?? product.id;
+    const token = getBuyerToken();
+    const accessToken = await getAccessToken();
+    const res = await createPayment(productId, token, accessToken);
+
+    if (res.status === "sold_out") {
+      storeResult({
+        success: false,
+        status: "sold_out",
+        order_id: null,
+        remaining_stock: res.remaining_stock,
+        message: res.message,
+      });
+      router.push("/result");
+      return;
+    }
+
+    if (res.status === "confirmed") {
+      storeResult({
+        success: true,
+        status: "confirmed",
+        order_id: res.order_id,
+        remaining_stock: res.remaining_stock,
+        message: res.message,
+      });
+      router.push("/result");
+      return;
+    }
+
+    if (!res.snap_token || !window.snap) {
+      setError("Pembayaran belum siap. Coba lagi sebentar.");
+      setProcessing(false);
+      return;
+    }
+
+    window.snap.pay(res.snap_token, {
+      onSuccess: () => {
+        storeResult({
+          success: true,
+          status: "confirmed",
+          order_id: res.order_id,
+          remaining_stock: res.remaining_stock,
+          message: "Pembayaran berhasil. Tiket dikonfirmasi.",
+        });
+        router.push("/result");
+      },
+      onPending: () => {
+        setError("Pembayaran tertunda. Status tiket diperbarui otomatis setelah lunas.");
+        setProcessing(false);
+      },
+      onError: () => {
+        setError("Pembayaran gagal. Slot dilepas, silakan coba lagi.");
+        setProcessing(false);
+      },
+      onClose: () => {
+        setProcessing(false);
+      },
+    });
+  }
+
   async function confirm() {
     if (!product) return;
     setProcessing(true);
     setError(null);
     try {
-      const productId = getRememberedProductId() ?? product.id;
-      const token = getBuyerToken();
-      // Ambil token sesi bila user login agar order tercatat ke akunnya.
-      let accessToken: string | undefined;
-      try {
-        const { data } = await getSupabaseBrowser().auth.getSession();
-        accessToken = data.session?.access_token ?? undefined;
-      } catch {
-        accessToken = undefined;
+      if (USE_MIDTRANS) {
+        await payMidtrans();
+      } else {
+        await paySimulation();
       }
-      const result = await purchaseTicket(productId, token, accessToken);
-      storeResult(result);
-      router.push("/result");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Gagal memproses");
       setProcessing(false);
     }
   }
 
+  const buttonLabel = (() => {
+    if (!product) return "Memuat...";
+    if (product.remaining_stock <= 0) return "Tiket Habis";
+    if (processing) return "Memproses...";
+    return USE_MIDTRANS
+      ? "Bayar dengan Midtrans"
+      : "Konfirmasi Pembayaran (Simulasi)";
+  })();
+
   return (
     <main className="relative min-h-[100dvh] overflow-clip px-6 py-10">
+      {USE_MIDTRANS && (
+        <Script
+          src={SNAP_SRC}
+          data-client-key={MIDTRANS_CLIENT_KEY}
+          strategy="afterInteractive"
+          onLoad={() => setSnapReady(true)}
+        />
+      )}
       <Grain />
       <div
         aria-hidden
@@ -93,7 +208,9 @@ export default function CheckoutPage() {
           Checkout
         </h1>
         <p className="mt-3 font-mono text-xs uppercase tracking-[0.3em] text-haze">
-          Langkah terakhir mengamankan tiket
+          {USE_MIDTRANS
+            ? "Pembayaran via Midtrans (mode sandbox)"
+            : "Langkah terakhir mengamankan tiket"}
         </p>
 
         {loading ? (
@@ -135,18 +252,20 @@ export default function CheckoutPage() {
 
             <div className="border-t border-ink-line bg-ink p-6">
               <p className="mb-4 text-center font-mono text-[11px] uppercase tracking-widest text-haze">
-                Pembayaran disimulasikan. Klik konfirmasi untuk memesan slot stok.
+                {USE_MIDTRANS
+                  ? "Slot stok dikunci dulu, lalu pembayaran diproses lewat Midtrans Snap."
+                  : "Pembayaran disimulasikan. Klik konfirmasi untuk memesan slot stok."}
               </p>
               <MagneticButton
                 onClick={confirm}
-                disabled={processing || product.remaining_stock <= 0}
-                className="w-full rounded-full bg-acid px-8 py-4 font-display text-xl uppercase tracking-wide text-ink hover:bg-acid-deep"
+                disabled={
+                  processing ||
+                  product.remaining_stock <= 0 ||
+                  (USE_MIDTRANS && !snapReady)
+                }
+                className="w-full rounded-full bg-acid px-8 py-4 font-display text-xl uppercase tracking-wide text-ink hover:bg-acid-deep disabled:opacity-50"
               >
-                {product.remaining_stock <= 0
-                  ? "Tiket Habis"
-                  : processing
-                    ? "Memproses..."
-                    : "Konfirmasi Pembayaran (Simulasi)"}
+                {buttonLabel}
               </MagneticButton>
               {error && (
                 <p className="mt-3 text-center font-mono text-xs uppercase tracking-widest text-flame">

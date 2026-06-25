@@ -1,4 +1,4 @@
-import type { Product, PurchaseResult } from "@/lib/types";
+import type { CreatePaymentResult, Product, PurchaseResult } from "@/lib/types";
 
 const TOKEN_KEY = "lonjak_buyer_token";
 const RESULT_KEY = "lonjak_result";
@@ -56,6 +56,7 @@ export async function fetchProduct(): Promise<Product> {
   return json.product as Product;
 }
 
+// Jalur simulasi (dipakai mode simulasi dan load test): langsung confirmed.
 export async function purchaseTicket(
   productId: string,
   buyerToken: string,
@@ -64,7 +65,6 @@ export async function purchaseTicket(
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
-  // Sertakan token sesi bila user login, supaya order tercatat ke akunnya.
   if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
 
   const res = await fetch("/api/purchase", {
@@ -75,4 +75,25 @@ export async function purchaseTicket(
   const json = await res.json();
   if (!res.ok) throw new Error(json.error ?? "Gagal memproses pembelian");
   return json as PurchaseResult;
+}
+
+// Jalur Midtrans: kunci slot stok di server lalu dapatkan Snap token.
+export async function createPayment(
+  productId: string,
+  buyerToken: string,
+  accessToken?: string
+): Promise<CreatePaymentResult> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+
+  const res = await fetch("/api/payment/create", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ productId, buyerToken }),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error ?? "Gagal membuat transaksi");
+  return json as CreatePaymentResult;
 }
