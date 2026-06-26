@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Script from "next/script";
 import Grain from "@/components/Grain";
 import MagneticButton from "@/components/MagneticButton";
@@ -186,7 +185,7 @@ export default function CheckoutPage() {
   })();
 
   return (
-    <main className="relative min-h-[100dvh] overflow-clip px-6 py-10">
+    <main className="relative min-h-[100dvh] overflow-clip px-6 pb-10 pt-28">
       {USE_MIDTRANS && (
         <Script
           src={SNAP_SRC}
@@ -201,10 +200,7 @@ export default function CheckoutPage() {
         className="pointer-events-none absolute right-[-10%] top-0 h-[30rem] w-[30rem] rounded-full bg-acid/10 blur-[130px] drift"
       />
       <div className="relative z-10 mx-auto w-full max-w-2xl">
-        <Link href="/" className="font-display text-xl uppercase tracking-tight">
-          Lonjak
-        </Link>
-        <h1 className="mt-8 font-display text-5xl uppercase leading-none md:text-6xl">
+        <h1 className="font-display text-5xl uppercase leading-none md:text-6xl">
           Checkout
         </h1>
         <p className="mt-3 font-mono text-xs uppercase tracking-[0.3em] text-haze">

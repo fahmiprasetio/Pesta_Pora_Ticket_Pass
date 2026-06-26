@@ -1,6 +1,5 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import Grain from "@/components/Grain";
 import MagneticButton from "@/components/MagneticButton";
 import { getSupabaseBrowser } from "@/lib/supabaseClient";
@@ -167,17 +166,14 @@ export default function AdminPage() {
     : [];
 
   return (
-    <main className="relative min-h-[100dvh] overflow-clip px-6 py-12">
+    <main className="relative min-h-[100dvh] overflow-clip px-6 pb-12 pt-28">
       <Grain />
       <div
         aria-hidden
         className="pointer-events-none absolute right-[-10%] top-0 h-[28rem] w-[28rem] rounded-full bg-flame/10 blur-[130px] drift"
       />
       <div className="relative z-10 mx-auto w-full max-w-3xl">
-        <Link href="/" className="font-display text-xl uppercase tracking-tight">
-          Lonjak
-        </Link>
-        <p className="mt-8 font-mono text-xs uppercase tracking-[0.3em] text-flame">
+        <p className="font-mono text-xs uppercase tracking-[0.3em] text-flame">
           Control panel
         </p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
