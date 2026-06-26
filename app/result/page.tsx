@@ -72,14 +72,22 @@ export default function ResultPage() {
                 ? "This token already holds a ticket. The system automatically rejects duplicate purchases."
                 : "Stock was decremented atomically in the database. Your order id is unique and permanently recorded."}
             </p>
-            {canViewTicket && (
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              {canViewTicket && (
+                <Link
+                  href={`/ticket/${orderId}`}
+                  className="inline-block rounded-full bg-acid px-7 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-acid-deep"
+                >
+                  View E-Ticket
+                </Link>
+              )}
               <Link
-                href={`/ticket/${orderId}`}
-                className="mt-6 inline-block rounded-full bg-acid px-7 py-3 font-mono text-xs uppercase tracking-widest text-ink transition-colors hover:bg-acid-deep"
+                href="/"
+                className="inline-block rounded-full border border-ink-line bg-ink-soft px-7 py-3 font-mono text-xs uppercase tracking-widest text-paper transition-colors hover:border-acid hover:text-acid"
               >
-                View E-Ticket
+                Back to Home
               </Link>
-            )}
+            </div>
             <p className="mt-4 max-w-[44ch] text-center font-mono text-[11px] uppercase tracking-widest text-haze">
               Saved to this device. Find it anytime under My Tickets.
             </p>
@@ -108,14 +116,16 @@ export default function ResultPage() {
           </div>
         )}
 
-        <div className="mt-10 flex justify-center">
-          <MagneticButton
-            onClick={() => router.push("/")}
-            className="rounded-full border border-ink-line bg-ink-soft px-8 py-4 font-display text-lg uppercase tracking-wide text-paper hover:border-acid hover:text-acid"
-          >
-            Back to Home
-          </MagneticButton>
-        </div>
+        {!success && (
+          <div className="mt-10 flex justify-center">
+            <MagneticButton
+              onClick={() => router.push("/")}
+              className="rounded-full border border-ink-line bg-ink-soft px-8 py-4 font-display text-lg uppercase tracking-wide text-paper hover:border-acid hover:text-acid"
+            >
+              Back to Home
+            </MagneticButton>
+          </div>
+        )}
       </div>
     </main>
   );
