@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Grain from "@/components/Grain";
-import NavBar from "@/components/NavBar";
 import TicketStub from "@/components/TicketStub";
 import MagneticButton from "@/components/MagneticButton";
 import { getOrderById, type OrderItem } from "@/lib/orders";
@@ -77,9 +76,8 @@ export default function TicketPage() {
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-1/4 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full bg-acid/12 blur-[140px] drift"
       />
-      <NavBar />
 
-      <section className="relative z-10 mx-auto max-w-2xl px-6 pb-12 pt-24">
+      <section className="relative z-10 mx-auto max-w-2xl px-6 pb-12 pt-28">
         <Link
           href="/tickets"
           className="no-print font-mono text-xs uppercase tracking-[0.3em] text-haze transition-colors hover:text-acid"

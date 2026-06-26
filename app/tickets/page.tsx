@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Grain from "@/components/Grain";
-import NavBar from "@/components/NavBar";
 import { getMyOrders, type OrderItem } from "@/lib/orders";
 import { formatRupiah } from "@/lib/format";
 
@@ -42,8 +41,6 @@ export default function MyTicketsPage() {
         aria-hidden
         className="pointer-events-none absolute right-[-15%] top-0 h-[34rem] w-[34rem] rounded-full bg-acid/10 blur-[140px] drift"
       />
-
-      <NavBar />
 
       <section className="relative z-10 mx-auto max-w-[900px] px-6 pb-16 pt-28">
         <p className="font-mono text-xs uppercase tracking-[0.3em] text-acid">
