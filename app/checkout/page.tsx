@@ -88,7 +88,7 @@ export default function CheckoutPage() {
     }
   }
 
-  async function paySimulation() {
+  async function payDirect() {
     if (!product) return;
     const productId = getRememberedProductId() ?? product.id;
     const token = getBuyerToken();
@@ -170,7 +170,7 @@ export default function CheckoutPage() {
       if (USE_MIDTRANS) {
         await payMidtrans();
       } else {
-        await paySimulation();
+        await payDirect();
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to process");
@@ -182,9 +182,7 @@ export default function CheckoutPage() {
     if (!product) return "Loading...";
     if (product.remaining_stock <= 0) return "Sold Out";
     if (processing) return "Processing...";
-    return USE_MIDTRANS
-      ? "Pay with Midtrans"
-      : "Confirm Payment (Simulation)";
+    return USE_MIDTRANS ? "Pay with Midtrans" : "Confirm Payment";
   })();
 
   return (
@@ -211,7 +209,7 @@ export default function CheckoutPage() {
         </h1>
         <p className="mt-3 font-mono text-xs uppercase tracking-[0.3em] text-haze">
           {USE_MIDTRANS
-            ? "Payment via Midtrans (sandbox mode)"
+            ? "Secure payment via Midtrans"
             : "Final step to secure your ticket"}
         </p>
 
@@ -255,8 +253,8 @@ export default function CheckoutPage() {
             <div className="border-t border-ink-line bg-ink p-6">
               <p className="mb-4 text-center font-mono text-[11px] uppercase tracking-widest text-haze">
                 {USE_MIDTRANS
-                  ? "The stock slot is locked first, then payment is processed via Midtrans Snap."
-                  : "Payment is simulated. Click confirm to reserve a stock slot."}
+                  ? "Your stock slot is locked first, then payment is completed securely via Midtrans."
+                  : "Confirm to lock your stock slot and secure your ticket instantly."}
               </p>
               <MagneticButton
                 onClick={confirm}
