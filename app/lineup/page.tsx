@@ -68,7 +68,7 @@ export default function LineupPage() {
 
       <NavBar />
 
-      <section className="relative z-10 mx-auto max-w-[1400px] px-6 pb-10 pt-6 lg:pt-12">
+      <section className="relative z-10 mx-auto max-w-[1400px] px-6 pb-10 pt-24 lg:pt-28">
         <p className="font-mono text-xs uppercase tracking-[0.4em] text-acid">
           The acts
         </p>
@@ -192,7 +192,7 @@ export default function LineupPage() {
           ))}
         </div>
         <p className="mt-8 max-w-[60ch] font-mono text-xs uppercase leading-relaxed tracking-widest text-haze">
-          Schedule subject to change. The lineup is illustrative for this demo.
+          Lineup and set times are subject to change.
         </p>
       </section>
 

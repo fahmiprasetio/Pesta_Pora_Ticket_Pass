@@ -178,7 +178,7 @@ export default function AdminPage() {
           Lonjak
         </Link>
         <p className="mt-8 font-mono text-xs uppercase tracking-[0.3em] text-flame">
-          Demo panel
+          Control panel
         </p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
           <h1 className="font-display text-5xl uppercase leading-none md:text-6xl">
@@ -257,11 +257,10 @@ export default function AdminPage() {
 
             <div className="mt-6 rounded-2xl border border-ink-line bg-ink-soft p-6">
               <p className="font-mono text-xs uppercase tracking-[0.3em] text-flame">
-                Reset demo
+                Reset stock
               </p>
               <p className="mt-2 max-w-[44ch] text-sm text-haze">
-                Restore stock to full and delete all orders to rerun the drop
-                while recording your video.
+                Restore stock to full and clear all orders to run a fresh drop.
               </p>
               <MagneticButton
                 onClick={handleReset}
