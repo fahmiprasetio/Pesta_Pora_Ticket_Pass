@@ -9,7 +9,7 @@ export default function NavBar() {
           href="/"
           className="font-display text-2xl uppercase tracking-tight transition-colors hover:text-acid"
         >
-          Lonjak
+          Pestapora
         </Link>
 
         <nav className="flex items-center gap-5 font-mono text-xs uppercase tracking-widest text-haze">

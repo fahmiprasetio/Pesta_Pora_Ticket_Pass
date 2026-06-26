@@ -209,9 +209,9 @@ export default function HomePage() {
 
       <footer className="relative z-10 border-t border-ink-line">
         <div className="mx-auto flex max-w-[1400px] flex-col items-center gap-1 px-6 py-5 text-center sm:flex-row sm:justify-between sm:text-left">
-          <span className="font-display text-base uppercase tracking-wide">Lonjak</span>
+          <span className="font-display text-base uppercase tracking-wide">Pestapora</span>
           <span className="font-mono text-[11px] uppercase tracking-widest text-haze">
-            &copy; 2026 Lonjak. All rights reserved.
+            &copy; 2026 Pestapora. All rights reserved.
           </span>
         </div>
       </footer>

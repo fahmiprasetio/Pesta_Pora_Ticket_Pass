@@ -25,9 +25,9 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LONJAK / Surge-Proof Ticket Drop",
+  title: "PESTAPORA 2026 / Ticket Drop",
   description:
-    "A concert ticket flash sale that withstands traffic surges and prevents overselling. Built on Next.js and Supabase.",
+    "Ticket drop for PESTAPORA 2026 at JIExpo Kemayoran, Jakarta. Built to withstand traffic surges and prevent overselling, on Next.js and Supabase.",
 };
 
 export default function RootLayout({
