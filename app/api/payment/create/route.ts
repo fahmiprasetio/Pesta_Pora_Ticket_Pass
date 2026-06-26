@@ -31,14 +31,14 @@ async function resolveUser(request: NextRequest): Promise<VerifiedUser | null> {
 }
 
 export async function POST(request: NextRequest) {
-  const serverKey = process.env.MIDTRANS_SERVER_KEY;
+  const serverKey = process.env.MIDTRANS_SERVER_KEY?.trim();
   if (!serverKey) {
     return NextResponse.json(
       { error: "MIDTRANS_SERVER_KEY is not set in the environment." },
       { status: 500 }
     );
   }
-  const isProduction = process.env.MIDTRANS_IS_PRODUCTION === "true";
+  const isProduction = process.env.MIDTRANS_IS_PRODUCTION?.trim() === "true";
   const snapBase = isProduction
     ? "https://app.midtrans.com/snap/v1/transactions"
     : "https://app.sandbox.midtrans.com/snap/v1/transactions";

@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 // Midtrans notification webhook. Source of truth for payment status.
 // Verify signature: sha512(order_id + status_code + gross_amount + serverKey).
 export async function POST(request: NextRequest) {
-  const serverKey = process.env.MIDTRANS_SERVER_KEY;
+  const serverKey = process.env.MIDTRANS_SERVER_KEY?.trim();
   if (!serverKey) {
     return NextResponse.json({ error: "Server key is not set." }, { status: 500 });
   }
