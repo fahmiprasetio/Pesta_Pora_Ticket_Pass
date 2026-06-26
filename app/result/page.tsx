@@ -34,7 +34,7 @@ export default function ResultPage() {
   const canViewTicket = success && orderId.length > 0;
 
   return (
-    <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-clip px-6 py-16">
+    <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-clip px-6 pb-16 pt-28">
       <Grain />
       <div
         aria-hidden
@@ -42,12 +42,6 @@ export default function ResultPage() {
           success ? "bg-acid/15" : "bg-flame/15"
         }`}
       />
-      <Link
-        href="/"
-        className="relative z-10 mb-10 font-display text-xl uppercase tracking-tight"
-      >
-        Lonjak
-      </Link>
 
       <div className="relative z-10 w-full">
         {success && result ? (
