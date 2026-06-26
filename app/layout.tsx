@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton, Space_Grotesk, Space_Mono } from "next/font/google";
 import { AuthProvider } from "@/components/AuthProvider";
+import NavBar from "@/components/NavBar";
 import "./globals.css";
 
 const anton = Anton({
@@ -40,7 +41,10 @@ export default function RootLayout({
       className={`${anton.variable} ${spaceGrotesk.variable} ${spaceMono.variable}`}
     >
       <body className="bg-ink text-paper antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <NavBar />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

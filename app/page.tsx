@@ -2,7 +2,6 @@ import Grain from "@/components/Grain";
 import Marquee from "@/components/Marquee";
 import Reveal from "@/components/Reveal";
 import ProductCard from "@/components/ProductCard";
-import NavBar from "@/components/NavBar";
 import { EVENT } from "@/lib/event";
 
 const STATS = [
@@ -71,9 +70,7 @@ export default function HomePage() {
       />
 
       <div className="flex min-h-[100dvh] flex-col">
-        <NavBar />
-
-        <section className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pb-10 pt-4">
+        <section className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pb-10 pt-24">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-end lg:gap-12">
             <div>
               <div className="flex flex-wrap items-center gap-3">

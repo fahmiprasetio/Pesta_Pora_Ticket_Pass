@@ -1,5 +1,4 @@
 import Grain from "@/components/Grain";
-import NavBar from "@/components/NavBar";
 import Marquee from "@/components/Marquee";
 import Reveal from "@/components/Reveal";
 import { EVENT } from "@/lib/event";
@@ -65,8 +64,6 @@ export default function LineupPage() {
         aria-hidden
         className="pointer-events-none absolute right-[-20%] top-[24%] h-[36rem] w-[36rem] rounded-full bg-flame/10 blur-[140px] drift"
       />
-
-      <NavBar />
 
       <section className="relative z-10 mx-auto max-w-[1400px] px-6 pb-10 pt-24 lg:pt-28">
         <p className="font-mono text-xs uppercase tracking-[0.4em] text-acid">
