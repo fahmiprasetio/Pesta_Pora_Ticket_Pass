@@ -60,8 +60,6 @@ k8s/
 # Load testing (dev tool, not needed for web)
 loadtest/
 
-# Documentation (not needed for web)
-README.md
 
 # Default Next.js placeholder assets (unused)
 /public/file.svg
