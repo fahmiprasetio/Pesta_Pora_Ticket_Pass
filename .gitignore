@@ -51,6 +51,18 @@ skills-lock.json
 # Supabase local dev (migrations already applied to cloud, not needed in repo)
 supabase/
 
+# Docker & Kubernetes deployment configs (ops only, not needed for web)
+Dockerfile
+.dockerignore
+docker-compose.yml
+k8s/
+
+# Load testing (dev tool, not needed for web)
+loadtest/
+
+# Documentation (not needed for web)
+README.md
+
 # Default Next.js placeholder assets (unused)
 /public/file.svg
 /public/globe.svg
