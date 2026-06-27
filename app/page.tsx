@@ -7,28 +7,28 @@ import { EVENT } from "@/lib/event";
 const STATS = [
   { value: "100", label: "Tickets", note: "Fixed stock. Never quietly topped up." },
   { value: "1", label: "Drop", note: "One gate, one moment, for everyone." },
-  { value: "0", label: "Oversold", note: "Guaranteed at the database row level." },
+  { value: "0", label: "Oversold", note: "Your seat is yours. No double-booking, ever." },
   { value: "100%", label: "Consistent", note: "There is no ticket number 101." },
 ];
 
 const FEATURES = [
   {
     num: "01",
-    title: "Anti Overselling",
-    body: "Stock is decremented in a single row-locked UPDATE in Postgres. Thousands of concurrent requests are serialized, so stock can never drop below zero.",
-    spec: "Postgres row lock + unique index",
+    title: "Guaranteed Entry",
+    body: "Every ticket is locked to one verified buyer. Once it is yours, it stays yours, with no duplicates and no double-booked spots.",
+    spec: "Secure checkout",
   },
   {
     num: "02",
-    title: "Rapid Elasticity",
-    body: "Runs on serverless functions that scale up automatically when traffic spikes, then shrink back when it is quiet. No idle servers.",
-    spec: "Vercel serverless + Supabase",
+    title: "Instant E-Ticket",
+    body: "Your ticket arrives the second your payment clears. A scannable QR code, ready on your phone, straight to the gate.",
+    spec: "QR at the gate",
   },
   {
     num: "03",
-    title: "Measured Service",
-    body: "Every drop is measured. Requests per second, p95 latency, and success rate are tracked live through k6 load test scenarios.",
-    spec: "k6 load test",
+    title: "Fair For Everyone",
+    body: "When thousands rush the drop at once, every fan gets the same fair shot. Fast, smooth, and first come first served.",
+    spec: "Live availability",
   },
 ];
 
@@ -36,22 +36,22 @@ const STEPS = [
   {
     num: "01",
     title: "Queue",
-    body: "Enter the virtual waiting room. Every buyer holds a unique token, with no account required.",
+    body: "Enter the waiting room before the drop. No account needed, just you and the countdown.",
   },
   {
     num: "02",
     title: "Gates open",
-    body: "The moment the drop starts, thousands of requests hit the same endpoint in the same second.",
+    body: "The second the clock hits zero, the drop goes live for everyone at the same time.",
   },
   {
     num: "03",
-    title: "Atomic lock",
-    body: "Postgres locks the stock row and decrements it one by one. A hundred stays a hundred.",
+    title: "Fair grab",
+    body: "Tickets are handed out one by one, in the order fans arrive. A hundred stays a hundred.",
   },
   {
     num: "04",
     title: "Ticket issued",
-    body: "Successful slots are confirmed instantly. A QR e-ticket is ready to scan and download.",
+    body: "Your spot is confirmed instantly, with a QR e-ticket ready to scan and download.",
   },
 ];
 
@@ -97,8 +97,8 @@ export default function HomePage() {
                 <span>{EVENT.gates}</span>
               </div>
               <p className="mt-5 max-w-[42ch] text-sm leading-relaxed text-haze">
-                A hundred tickets, one gate, thousands of buyers in the same
-                second. Built to survive the surge without ever overselling.
+                A hundred tickets, one gate, thousands of fans in the same
+                second. Get yours before the drop sells out.
               </p>
             </div>
 
@@ -132,7 +132,7 @@ export default function HomePage() {
       <section className="relative z-10 mx-auto max-w-[1400px] px-6 py-20">
         <Reveal>
           <h2 className="max-w-[20ch] font-display text-4xl uppercase leading-none md:text-6xl">
-            What we sell is not tickets, but <span className="text-acid">resilience</span>
+            Built for fans, <span className="text-acid">not scalpers</span>
           </h2>
         </Reveal>
         <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-ink-line bg-ink-line md:grid-cols-3">
@@ -156,7 +156,7 @@ export default function HomePage() {
       <section className="relative z-10 mx-auto max-w-[1400px] px-6 pb-8">
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.4em] text-flame">
-            Anatomy of one drop
+            How the drop works
           </p>
           <h2 className="mt-3 max-w-[18ch] font-display text-4xl uppercase leading-none md:text-6xl">
             From queue to ticket in four steps
