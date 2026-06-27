@@ -2,6 +2,7 @@ import Grain from "@/components/Grain";
 import Marquee from "@/components/Marquee";
 import Reveal from "@/components/Reveal";
 import ProductCard from "@/components/ProductCard";
+import HeroBackdrop from "@/components/HeroBackdrop";
 import { EVENT } from "@/lib/event";
 
 const STATS = [
@@ -70,17 +71,7 @@ export default function HomePage() {
       />
 
       <div className="relative z-0 flex min-h-[100dvh] flex-col overflow-hidden">
-        {/* Background Video */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <video
-            src="/hero-secetion-video.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="h-full w-full object-contain"
-          />
-        </div>
+        <HeroBackdrop />
 
         <section className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pb-10 pt-24">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-end lg:gap-12">
