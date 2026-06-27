@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pestapora-web
+  namespace: pestapora
+  labels:
+    app: pestapora-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pestapora-web
+  template:
+    metadata:
+      labels:
+        app: pestapora-web
+    spec:
+      containers:
+        - name: web
+          # Local image built into minikube. To use a registry image instead:
+          #   kubectl -n pestapora set image deployment/pestapora-web web=<image>
+          image: pestapora-web:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: pestapora-config
+            - secretRef:
+                name: pestapora-secret
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds: 20

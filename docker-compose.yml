@@ -1,0 +1,21 @@
+# Local container run. Usage:
+#   docker compose --env-file .env.local up --build
+services:
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_PAYMENT_MODE: ${NEXT_PUBLIC_PAYMENT_MODE:-simulasi}
+        NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: ${NEXT_PUBLIC_MIDTRANS_CLIENT_KEY:-}
+        NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION: ${NEXT_PUBLIC_MIDTRANS_IS_PRODUCTION:-false}
+    image: pestapora-web:local
+    ports:
+      - "3000:3000"
+    environment:
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      MIDTRANS_SERVER_KEY: ${MIDTRANS_SERVER_KEY:-}
+      MIDTRANS_IS_PRODUCTION: ${MIDTRANS_IS_PRODUCTION:-false}
+      ADMIN_RESET_TOKEN: ${ADMIN_RESET_TOKEN:-}
+      NEXT_PUBLIC_PAYMENT_MODE: ${NEXT_PUBLIC_PAYMENT_MODE:-simulasi}
