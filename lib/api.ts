@@ -50,8 +50,7 @@ export function readResult(): PurchaseResult | null {
   }
 }
 
-// Persist a confirmed order id on this device so the buyer can revisit their
-// ticket without an account. localStorage survives tab close and refresh.
+// Persist order ID locally for retrieval.
 export function rememberOrderId(id: string): void {
   if (typeof window === "undefined" || !id) return;
   try {
@@ -85,7 +84,6 @@ export async function fetchProduct(): Promise<Product> {
   return json.product as Product;
 }
 
-// Simulation path (used by simulation mode and load test): confirmed immediately.
 export async function purchaseTicket(
   productId: string,
   buyerToken: string,
@@ -106,7 +104,6 @@ export async function purchaseTicket(
   return json as PurchaseResult;
 }
 
-// Midtrans path: lock the stock slot on the server then obtain a Snap token.
 export async function createPayment(
   productId: string,
   buyerToken: string,

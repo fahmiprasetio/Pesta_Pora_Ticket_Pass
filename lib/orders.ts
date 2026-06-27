@@ -26,8 +26,6 @@ function normalize(row: OrderRow): OrderItem | null {
   };
 }
 
-// A single ticket by order id, fetched through a service-role server route.
-// No login is required: the order id itself is the bearer reference.
 export async function getOrderById(id: string): Promise<OrderItem | null> {
   if (!id) return null;
   const res = await fetch(`/api/order/${id}`, { cache: "no-store" });
@@ -37,7 +35,6 @@ export async function getOrderById(id: string): Promise<OrderItem | null> {
   return normalize(json as OrderRow);
 }
 
-// Tickets remembered on this device (localStorage), newest first.
 export async function getMyOrders(): Promise<OrderItem[]> {
   const ids = getRememberedOrderIds();
   if (ids.length === 0) return [];

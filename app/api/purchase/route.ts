@@ -5,8 +5,6 @@ import { getSupabaseServer } from "@/lib/supabaseServer";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-// Verify the access token (if present) and return the authenticated user id.
-// Never trust a raw id from the client: the id is derived from the token.
 async function resolveUserId(request: NextRequest): Promise<string | null> {
   const authHeader = request.headers.get("authorization") ?? "";
   const token = authHeader.toLowerCase().startsWith("bearer ")

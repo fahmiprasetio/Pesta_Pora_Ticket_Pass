@@ -43,7 +43,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       unsubscribe = () => sub.subscription.unsubscribe();
     } catch {
-      // Env Supabase belum siap: hentikan loading agar UI tetap render.
       setLoading(false);
     }
 

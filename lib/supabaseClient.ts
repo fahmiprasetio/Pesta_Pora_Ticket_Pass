@@ -1,7 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-// Client sisi browser memakai anon key. Dibuat lazy agar import yang tidak
-// terpakai tidak menabrak proses build ketika env belum diisi.
+// Client-side Supabase client initialized lazily using anon key.
 let cached: SupabaseClient | null = null;
 
 export function getSupabaseBrowser(): SupabaseClient {
@@ -12,7 +11,7 @@ export function getSupabaseBrowser(): SupabaseClient {
 
   if (!url || !anonKey) {
     throw new Error(
-      "Environment Supabase belum lengkap: butuh NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY."
+      "Missing Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY"
     );
   }
 

@@ -1,5 +1,3 @@
-// Poster material (static) for display. Transaction data (price, stock, date)
-// is still fetched from the database via the API.
 export const EVENT = {
   name: "PESTAPORA",
   edition: "2026",

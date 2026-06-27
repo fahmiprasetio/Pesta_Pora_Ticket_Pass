@@ -4,9 +4,6 @@ import { getSupabaseServer } from "@/lib/supabaseServer";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-// Demo reset: restore stock to full and delete orders.
-// Protected by an admin token (ADMIN_RESET_TOKEN) so it cannot be triggered by
-// just anyone. Executed with the service role via the reset_demo() RPC.
 export async function POST(request: NextRequest) {
   const expected = process.env.ADMIN_RESET_TOKEN;
   if (!expected) {

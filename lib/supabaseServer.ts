@@ -1,7 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-// Client sisi server memakai service role key. JANGAN pernah diimpor di
-// komponen client. Dibuat lazy agar build tidak gagal saat env belum ada.
+// Server-side Supabase client initialized lazily using service role key.
 let cached: SupabaseClient | null = null;
 
 export function getSupabaseServer(): SupabaseClient {
@@ -12,7 +11,7 @@ export function getSupabaseServer(): SupabaseClient {
 
   if (!url || !serviceRoleKey) {
     throw new Error(
-      "Environment Supabase belum lengkap: butuh NEXT_PUBLIC_SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY."
+      "Missing Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY"
     );
   }
 

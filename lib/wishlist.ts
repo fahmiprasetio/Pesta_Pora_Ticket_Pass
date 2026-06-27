@@ -43,7 +43,6 @@ export async function addToWishlist(productId: string): Promise<void> {
   const { error } = await supabase
     .from("wishlists")
     .insert({ user_id: userId, product_id: productId });
-  // 23505 = duplicate (already in wishlist), safe to ignore.
   if (error && error.code !== "23505") throw new Error(error.message);
 }
 
