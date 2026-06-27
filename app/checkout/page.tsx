@@ -135,7 +135,19 @@ export default function CheckoutPage() {
     }
 
     window.snap.pay(res.snap_token, {
-      onSuccess: () => {
+      onSuccess: async () => {
+        // Confirm on the server right away so the ticket is marked paid even
+        // when the Midtrans webhook is slow or not configured yet. The
+        // endpoint re-checks the real status from Midtrans before confirming.
+        try {
+          await fetch("/api/payment/confirm", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId: res.order_id }),
+          });
+        } catch {
+          // The webhook remains the backup confirmation path.
+        }
         storeResult({
           success: true,
           status: "confirmed",
