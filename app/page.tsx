@@ -69,7 +69,20 @@ export default function HomePage() {
         className="pointer-events-none absolute right-[-20%] top-[18%] h-[36rem] w-[36rem] rounded-full bg-flame/10 blur-[140px] drift"
       />
 
-      <div className="flex min-h-[100dvh] flex-col">
+      <div className="relative z-0 flex min-h-[100dvh] flex-col overflow-hidden">
+        {/* Background Video */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <video
+            src="/hero-secetion-video.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="h-full w-full object-cover opacity-25"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/40" />
+        </div>
+
         <section className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pb-10 pt-24">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-end lg:gap-12">
             <div>
@@ -180,7 +193,16 @@ export default function HomePage() {
       </section>
 
       <section className="relative z-10 mx-auto max-w-[1400px] px-6 py-24">
-        <div className="relative overflow-hidden rounded-3xl border border-ink-line bg-ink-soft px-8 py-16 md:px-16 md:py-24">
+        <div className="relative z-0 overflow-hidden rounded-3xl border border-ink-line px-8 py-16 md:px-16 md:py-24">
+          {/* Background layers */}
+          <div className="absolute inset-0 bg-ink-soft -z-30" />
+          <img
+            src="/footer.jpg"
+            alt="Footer background"
+            className="absolute inset-0 -z-20 h-full w-full object-cover opacity-45"
+          />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/90 via-ink/60 to-transparent" />
+
           <div
             aria-hidden
             className="pointer-events-none absolute -right-24 -top-24 h-[26rem] w-[26rem] rounded-full bg-flame/15 blur-[120px] drift"
