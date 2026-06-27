@@ -155,7 +155,7 @@ export default function LineupPage() {
         </div>
       </section>
 
-      <section className="relative z-10 mx-auto max-w-[1400px] px-6 pb-24">
+      <section className="relative z-10 mx-auto max-w-[1400px] px-6 pb-10">
         <Reveal>
           <h2 className="max-w-[18ch] font-display text-4xl uppercase leading-none md:text-6xl">
             Stage <span className="text-acid">Schedule</span>
@@ -195,9 +195,9 @@ export default function LineupPage() {
 
       <footer className="relative z-10 border-t border-ink-line">
         <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-6 py-5 md:flex-row md:items-center md:justify-between">
-          <span className="font-display text-xl uppercase">Lonjak</span>
+          <span className="font-display text-xl uppercase">Pestapora</span>
           <span className="font-mono text-xs uppercase tracking-widest text-haze">
-            © 2026 Lonjak. All rights reserved.
+            © 2026 Pestapora. All rights reserved.
           </span>
         </div>
       </footer>
