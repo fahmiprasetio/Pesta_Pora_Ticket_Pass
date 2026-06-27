@@ -42,5 +42,15 @@ next-env.d.ts
 # Editor settings
 .vscode/
 
-# Agents
+# Agents & IDE config
 .agents/
+AGENTS.md
+CLAUDE.md
+skills-lock.json
+
+# Default Next.js placeholder assets (unused)
+/public/file.svg
+/public/globe.svg
+/public/next.svg
+/public/vercel.svg
+/public/window.svg
