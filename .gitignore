@@ -48,6 +48,9 @@ AGENTS.md
 CLAUDE.md
 skills-lock.json
 
+# Supabase local dev (migrations already applied to cloud, not needed in repo)
+supabase/
+
 # Default Next.js placeholder assets (unused)
 /public/file.svg
 /public/globe.svg
