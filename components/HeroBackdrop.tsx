@@ -4,14 +4,18 @@ import { useEffect, useRef, useState } from "react";
 
 export default function HeroBackdrop() {
   const [ready, setReady] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    // If the video is already buffered (e.g. served from cache), reveal at once.
-    if (videoRef.current && videoRef.current.readyState >= 3) {
+    // Only load the heavy background video on larger screens.
+    // On phones we keep the lightweight poster image to save bandwidth.
+    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+    if (!isDesktop) {
       setReady(true);
       return;
     }
+    setShowVideo(true);
     // Safety fallback so the splash can never get stuck on a slow network.
     const timer = setTimeout(() => setReady(true), 10000);
     return () => clearTimeout(timer);
@@ -35,21 +39,32 @@ export default function HeroBackdrop() {
         </span>
       </div>
 
-      {/* Full-bleed background video */}
+      {/* Full-bleed background: lightweight image always, video only on desktop */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <video
-          ref={videoRef}
-          src="/hero-secetion-video.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          poster="/footer.jpg"
-          onLoadedData={() => setReady(true)}
+        <img
+          src="/footer.jpg"
+          alt=""
+          aria-hidden
           className="h-full w-full object-cover"
         />
+        {showVideo && (
+          <video
+            ref={videoRef}
+            src="/hero-secetion-video.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster="/footer.jpg"
+            onLoadedData={() => setReady(true)}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
       </div>
+
+      {/* Bottom gradient for text legibility */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
     </>
   );
 }

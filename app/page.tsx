@@ -84,7 +84,7 @@ export default function HomePage() {
                   </span>
                   Drop live
                 </span>
-                <span className="font-mono text-xs uppercase tracking-[0.4em] text-haze">
+                <span className="font-mono text-xs uppercase tracking-[0.4em] text-paper">
                   {EVENT.tier}
                 </span>
               </div>
@@ -92,14 +92,14 @@ export default function HomePage() {
                 {EVENT.name}
                 <span className="block text-stroke-acid">{EVENT.edition}</span>
               </h1>
-              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-xs uppercase tracking-widest text-haze">
+              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-xs uppercase tracking-widest text-paper">
                 <span>{EVENT.dateLabel}</span>
                 <span className="h-1 w-1 rounded-full bg-acid" />
                 <span>{EVENT.venue}</span>
                 <span className="h-1 w-1 rounded-full bg-acid" />
                 <span>{EVENT.gates}</span>
               </div>
-              <p className="mt-5 max-w-[42ch] text-sm leading-relaxed text-haze">
+              <p className="mt-5 max-w-[42ch] text-sm leading-relaxed text-paper">
                 A hundred tickets, one gate, thousands of fans in the same
                 second. Get yours before the drop sells out.
               </p>
