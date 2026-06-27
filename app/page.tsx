@@ -78,9 +78,8 @@ export default function HomePage() {
             loop
             muted
             playsInline
-            className="h-full w-full object-cover opacity-25"
+            className="h-full w-full object-contain"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/40" />
         </div>
 
         <section className="relative z-10 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pb-10 pt-24">
@@ -192,7 +191,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="relative z-10 mx-auto max-w-[1400px] px-6 py-24">
+      <section className="relative z-10 mx-auto max-w-[1400px] px-6 pt-24 pb-10">
         <div className="relative z-0 overflow-hidden rounded-3xl border border-ink-line px-8 py-16 md:px-16 md:py-24">
           {/* Background layers */}
           <div className="absolute inset-0 bg-ink-soft -z-30" />
