@@ -1,39 +1,31 @@
 # Lonjak
 
-Platform flash sale tiket konser. Ribuan pembeli bisa berebut tiket secara bersamaan — stok tidak pernah minus.
+High-concurrency concert ticket flash sale platform built to handle thousands of simultaneous buyers without overselling.
 
-## Tech Stack
+## Stack
 
-- **Next.js 16** — App Router, Server Components
-- **Supabase** — Postgres + Auth + Realtime
-- **Midtrans** — Payment gateway
-- **Tailwind CSS v4**
+- **Next.js 16** — App Router, Server Components, API Routes
+- **Supabase** — Managed Postgres, Auth, Realtime subscriptions
+- **Midtrans** — Payment gateway integration
+- **Tailwind CSS v4** — Utility-first styling
 
-## Fitur Utama
-
-- Flash sale dengan anti-overselling atomik (Postgres row lock)
-- Realtime countdown stok tanpa refresh
-- Antrian virtual saat lonjakan traffic
-- Payment flow: reserve → bayar → konfirmasi via webhook
-- QR code tiket digital
-
-## Cara Jalankan
+## Getting Started
 
 ```bash
 npm install
-cp .env.example .env.local  # isi env vars
+cp .env.example .env.local
 npm run dev
 ```
 
 ## Environment Variables
 
-Lihat `.env.example` untuk daftar lengkap.
+See `.env.example` for the full reference.
 
-| Variabel | Keterangan |
-|----------|------------|
-| `NEXT_PUBLIC_SUPABASE_URL` | URL project Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Anon key Supabase |
-| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (server only) |
-| `MIDTRANS_SERVER_KEY` | Server key Midtrans |
-| `NEXT_PUBLIC_PAYMENT_MODE` | `midtrans` atau `simulasi` |
-| `ADMIN_RESET_TOKEN` | Token untuk endpoint reset demo |
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anonymous key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service role key — server-side only |
+| `MIDTRANS_SERVER_KEY` | Midtrans server key |
+| `NEXT_PUBLIC_PAYMENT_MODE` | `midtrans` or `simulasi` |
+| `ADMIN_RESET_TOKEN` | Bearer token for the demo reset endpoint |
