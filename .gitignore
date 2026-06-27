@@ -54,3 +54,6 @@ skills-lock.json
 /public/next.svg
 /public/vercel.svg
 /public/window.svg
+
+# k6 load test generated output (auto-generated, not source)
+loadtest/summary.json
