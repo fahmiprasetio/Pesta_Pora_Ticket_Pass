@@ -154,10 +154,6 @@ export default function ProductCard() {
       >
         {soldOut ? "Sold Out" : "Buy Now"}
       </MagneticButton>
-
-      <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-widest text-haze">
-        Anti-overselling guaranteed at the database level
-      </p>
     </div>
   );
 }
