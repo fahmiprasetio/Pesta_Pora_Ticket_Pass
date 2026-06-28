@@ -4,6 +4,14 @@ const TOKEN_KEY = "lonjak_buyer_token";
 const RESULT_KEY = "lonjak_result";
 const PRODUCT_KEY = "lonjak_product_id";
 const ORDERS_KEY = "lonjak_orders";
+const TICKETS_KEY = "lonjak_tickets";
+
+export interface CachedTicket {
+  id: string;
+  status: string;
+  created_at: string;
+  product: Product;
+}
 
 export function getBuyerToken(): string {
   if (typeof window === "undefined") return "";
@@ -72,6 +80,41 @@ export function getRememberedOrderIds(): string[] {
     if (!raw) return [];
     const list = JSON.parse(raw);
     return Array.isArray(list) ? (list as string[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+// Persist the FULL ticket on this device. My Tickets reads from this cache
+// first, so every ticket the user has bought stays visible — it survives a
+// page refresh and even survives the database row being removed later (for
+// example after an admin demo reset).
+export function rememberTicket(ticket: CachedTicket): void {
+  if (typeof window === "undefined" || !ticket?.id) return;
+  // Keep the id list in sync for backward compatibility.
+  rememberOrderId(ticket.id);
+  try {
+    const raw = window.localStorage.getItem(TICKETS_KEY);
+    const list: CachedTicket[] = raw ? (JSON.parse(raw) as CachedTicket[]) : [];
+    const idx = list.findIndex((t) => t.id === ticket.id);
+    if (idx >= 0) {
+      list[idx] = ticket;
+    } else {
+      list.unshift(ticket);
+    }
+    window.localStorage.setItem(TICKETS_KEY, JSON.stringify(list));
+  } catch {
+    // ignore storage errors
+  }
+}
+
+export function getCachedTickets(): CachedTicket[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(TICKETS_KEY);
+    if (!raw) return [];
+    const list = JSON.parse(raw);
+    return Array.isArray(list) ? (list as CachedTicket[]) : [];
   } catch {
     return [];
   }

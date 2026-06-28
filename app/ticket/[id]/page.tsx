@@ -6,7 +6,7 @@ import Grain from "@/components/Grain";
 import TicketStub from "@/components/TicketStub";
 import MagneticButton from "@/components/MagneticButton";
 import { getOrderById, type OrderItem } from "@/lib/orders";
-import { rememberOrderId } from "@/lib/api";
+import { rememberTicket } from "@/lib/api";
 import { EVENT } from "@/lib/event";
 import { formatRupiah } from "@/lib/format";
 
@@ -44,8 +44,9 @@ export default function TicketPage() {
           setMissing(true);
         } else {
           setOrder(o);
-          // Remember this ticket on the device so it shows up in My Tickets.
-          rememberOrderId(o.id);
+          // Remember the full ticket on the device so it shows up in My Tickets
+          // and survives a refresh or a later database reset.
+          rememberTicket(o);
         }
       })
       .catch(() => {

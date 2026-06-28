@@ -7,7 +7,8 @@ import TicketStub from "@/components/TicketStub";
 import MagneticButton from "@/components/MagneticButton";
 import type { PurchaseResult } from "@/lib/types";
 import { EVENT } from "@/lib/event";
-import { readResult, rememberOrderId } from "@/lib/api";
+import { readResult, rememberOrderId, rememberTicket } from "@/lib/api";
+import { getOrderById } from "@/lib/orders";
 
 export default function ResultPage() {
   const router = useRouter();
@@ -21,6 +22,15 @@ export default function ResultPage() {
     if (r?.success && r.status === "confirmed" && r.order_id) {
       // Save the ticket to this device so it appears under My Tickets.
       rememberOrderId(r.order_id);
+      // Also cache the FULL ticket right away (while the row still exists in
+      // the database) so it keeps showing up even after a later reset.
+      getOrderById(r.order_id)
+        .then((o) => {
+          if (o) rememberTicket(o);
+        })
+        .catch(() => {
+          // Ignore: the id is already remembered as a fallback.
+        });
     }
   }, []);
 
